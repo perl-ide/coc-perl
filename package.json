@@ -1,7 +1,7 @@
 {
   "name": "coc-perl",
   "description": "Perl Language Server for coc.nvim",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "eyma22s.yu@gmail.com",
   "activationEvents": [
     "onLanguage:perl"
@@ -177,7 +177,7 @@
     "perl"
   ],
   "license": "MIT",
-  "main": "./out/extension",
+  "main": "out/extension.js",
   "publisher": "ryuta69 <eyma22s.yu@gmail.com>",
   "repository": "https://github.com/ryuta69/coc-perl",
   "scripts": {
