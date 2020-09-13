@@ -4,6 +4,8 @@ Perl Language Server for [coc.nvim](https://github.com/neoclide/coc.nvim).
 
 This is a fork from [richterger/Perl-LanguageServer](https://github.com/richterger/Perl-LanguageServer/tree/master/clients/vscode/perl).
 
+<img width='400' alt="coc-perl" src="https://user-images.githubusercontent.com/41639488/93008922-91aad880-f5b5-11ea-995b-3097806a4327.png">
+
 ## Installation
 
 ### Requirements
