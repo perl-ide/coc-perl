@@ -1,0 +1,19 @@
+{
+  /* ===========
+    Install Plugins:
+	ESLint
+	Prettier - Code formatter
+	stylelint
+	Live Server
+  =========== */
+  "editor.formatOnSave": true,
+  "[typescript]": {
+    "editor.formatOnSave": false
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true
+  },
+  "files.autoSave": "off"
+}

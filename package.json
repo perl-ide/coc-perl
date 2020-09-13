@@ -1,7 +1,7 @@
 {
   "name": "coc-perl",
   "description": "Perl Language Server for coc.nvim",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "author": "eyma22s.yu@gmail.com",
   "activationEvents": [
     "onLanguage:perl"
@@ -156,15 +156,23 @@
     ]
   },
   "devDependencies": {
-    "@chemzqm/tsconfig": "^0.0.3",
-    "@chemzqm/tslint-config": "^1.0.18",
-    "@types/mocha": "^2.2.42",
+    "@babel/core": "^7.10.4",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
     "@types/node": "^7.10.9",
-    "coc.nvim": "^0.0.77",
+    "@typescript-eslint/eslint-plugin": "^3.6.0",
+    "@typescript-eslint/parser": "^3.6.0",
+    "babel-loader": "^8.1.0",
+    "coc.nvim": "^0.0.79",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-prettier": "^3.1.4",
+    "fork-ts-checker-webpack-plugin": "^5.0.7",
+    "prettier": "^2.0.5",
     "rimraf": "^3.0.1",
-    "ts-loader": "^8.0.1",
-    "tslint": "^5.20.1",
-    "typescript": "^3.7.5",
+    "typescript": "^3.9.6",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
   },
@@ -177,12 +185,18 @@
     "perl"
   ],
   "license": "MIT",
-  "main": "out/extension.js",
+  "main": "dist/extension.js",
   "publisher": "ryuta69 <eyma22s.yu@gmail.com>",
   "repository": "https://github.com/ryuta69/coc-perl",
   "scripts": {
     "build": "webpack",
-    "clean": "rimraf out",
+    "clean": "rimraf dist",
+    "eslint": "eslint --fix 'src/**/*.ts'",
+    "typecheck": "tsc -w",
     "prepare": "npx npm-run-all clean build"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "regenerator-runtime": "^0.13.7"
   }
 }

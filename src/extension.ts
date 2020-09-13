@@ -1,4 +1,6 @@
 'use strict';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import {
   workspace,
   ExtensionContext,
@@ -8,9 +10,8 @@ import {
   RevealOutputChannelOn,
 } from 'coc.nvim';
 
-export function activate(context: ExtensionContext) {
-
-  let config = workspace.getConfiguration('perl');
+export function activate(context: ExtensionContext): void {
+  const config = workspace.getConfiguration('perl');
   if (!config.get('enable')) {
     console.log('extension "perl" is disabled');
     return;
@@ -18,66 +19,86 @@ export function activate(context: ExtensionContext) {
 
   console.log('extension "perl" is now active');
 
-  let debug_adapter_port : string = config.get('debugAdapterPort') || '13603';
-  let perlCmd  : string           = config.get('perlCmd') || 'perl';
-  let logLevel : number           = config.get('logLevel') || 0;
-  let client_version : string     = "2.1.0";
-  let perlArgs : string[]         = ['-MPerl::LanguageServer', '-e', 'Perl::LanguageServer::run', '--',
-                                                                     '--port', debug_adapter_port,
-                                                                     '--log-level', logLevel.toString(),
-                                                                     '--version',   client_version] ;
+  const debug_adapter_port: string = config.get('debugAdapterPort') || '13603';
+  const perlCmd: string = config.get('perlCmd') || 'perl';
+  const logLevel: number = config.get('logLevel') || 0;
+  const client_version = '2.1.0';
+  const perlArgs: string[] = [
+    '-MPerl::LanguageServer',
+    '-e',
+    'Perl::LanguageServer::run',
+    '--',
+    '--port',
+    debug_adapter_port,
+    '--log-level',
+    logLevel.toString(),
+    '--version',
+    client_version,
+  ];
 
-  let sshPortOption   = '-p';
-  let sshCmd : string = config.get('sshCmd') || '';
+  let sshPortOption = '-p';
+  let sshCmd: string = config.get('sshCmd') || '';
   if (!sshCmd) {
     if (/^win/.test(process.platform)) {
-      sshCmd        = 'plink' ;
-      sshPortOption = '-P' ;
+      sshCmd = 'plink';
+      sshPortOption = '-P';
     } else {
-      sshCmd = 'ssh' ;
+      sshCmd = 'ssh';
     }
   }
-  let sshArgs:string[] = config.get('sshArgs') || [];
-  let sshUser:string   = config.get('sshUser') || '';
-  let sshAddr:string   = config.get('sshAddr') || '';
-  let sshPort:string   = config.get('sshPort') || '';
+  const sshArgs: string[] = config.get('sshArgs') || [];
+  const sshUser: string = config.get('sshUser') || '';
+  const sshAddr: string = config.get('sshAddr') || '';
+  const sshPort: string = config.get('sshPort') || '';
 
-  var serverCmd  : string;
-  var serverArgs : string[];
+  let serverCmd: string;
+  let serverArgs: string[];
 
   if (sshAddr && sshUser) {
     serverCmd = sshCmd;
     if (sshPort) {
       sshArgs.push(sshPortOption, sshPort);
     }
-    sshArgs.push('-l', sshUser, sshAddr, '-L', debug_adapter_port + ':127.0.0.1:' + debug_adapter_port, perlCmd);
+    sshArgs.push(
+      '-l',
+      sshUser,
+      sshAddr,
+      '-L',
+      debug_adapter_port + ':127.0.0.1:' + debug_adapter_port,
+      perlCmd
+    );
     serverArgs = sshArgs.concat(perlArgs);
   } else {
-    serverCmd  = perlCmd;
+    serverCmd = perlCmd;
     serverArgs = perlArgs;
   }
 
-  console.log('cmd: ' + serverCmd + ' args: ' + serverArgs.join (' '));
+  console.log('cmd: ' + serverCmd + ' args: ' + serverArgs.join(' '));
 
-  let debugArgs  = serverArgs.concat(["--debug"]) ;
-  let serverOptions: ServerOptions = {
-    run:   { command: serverCmd, args: serverArgs },
+  const debugArgs = serverArgs.concat(['--debug']);
+  const serverOptions: ServerOptions = {
+    run: { command: serverCmd, args: serverArgs },
     debug: { command: serverCmd, args: debugArgs },
-  } ;
+  };
 
   // Options to control the language client
-  let clientOptions: LanguageClientOptions = {
+  const clientOptions: LanguageClientOptions = {
     // Register the server for plain text documents
-    documentSelector: [{scheme: 'file', language: 'perl'}],
+    documentSelector: [{ scheme: 'file', language: 'perl' }],
     revealOutputChannelOn: RevealOutputChannelOn.Never,
     synchronize: {
       // Synchronize the setting section 'perl_lang' to the server
       configurationSection: 'perl',
-    }
+    },
   };
 
   // Create the language client and start the client.
-  let disposable = new LanguageClient('perl', 'Perl Language Server', serverOptions, clientOptions).start();
+  const disposable = new LanguageClient(
+    'perl',
+    'Perl Language Server',
+    serverOptions,
+    clientOptions
+  ).start();
 
   // Push the disposable to the context's subscriptions so that the
   // client can be deactivated on extension deactivation
