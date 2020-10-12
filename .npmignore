@@ -1,4 +1,16 @@
 *.map
 .DS_Store
 .github
+.tags
 .vscode
+
+.babelrc
+.eslintignore
+.eslintrc.js
+.prettierrc.js
+tsconfig.json
+yarn-error.log
+yarn.lock
+webpack.config.js
+
+src

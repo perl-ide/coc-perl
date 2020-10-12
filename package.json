@@ -1,7 +1,7 @@
 {
   "name": "coc-perl",
   "description": "Perl Language Server for coc.nvim",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "author": "eyma22s.yu@gmail.com",
   "activationEvents": [
     "onLanguage:perl"
@@ -192,8 +192,7 @@
     "build": "webpack",
     "clean": "rimraf dist",
     "eslint": "eslint --fix 'src/**/*.ts'",
-    "typecheck": "tsc -w",
-    "prepare": "npx npm-run-all clean build"
+    "typecheck": "tsc -w"
   },
   "dependencies": {
     "core-js": "^3.6.5",
