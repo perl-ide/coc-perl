@@ -21,9 +21,15 @@ export function activate(context: ExtensionContext): void {
 
   const debug_adapter_port: string = config.get('debugAdapterPort') || '13603';
   const perlCmd: string = config.get('perlCmd') || 'perl';
+  const perlArgs: string[] = config.get('perlArgs') || [];
+  const perlInc: string[] = config.get('perlInc') || [];
+  const perlIncOpt: string[] = perlInc.map((dir: string) => '-I' + dir);
+  const logFile: string = config.get('logFile') || '';
   const logLevel: number = config.get('logLevel') || 0;
-  const client_version = '2.1.0';
-  const perlArgs: string[] = [
+  const client_version = '2.3.0';
+  const perlArgsOpt: string[] = [
+    ...perlIncOpt,
+    ...perlArgs,
     '-MPerl::LanguageServer',
     '-e',
     'Perl::LanguageServer::run',
@@ -32,6 +38,8 @@ export function activate(context: ExtensionContext): void {
     debug_adapter_port,
     '--log-level',
     logLevel.toString(),
+    '--log-file',
+    logFile,
     '--version',
     client_version,
   ];
@@ -67,10 +75,10 @@ export function activate(context: ExtensionContext): void {
       debug_adapter_port + ':127.0.0.1:' + debug_adapter_port,
       perlCmd
     );
-    serverArgs = sshArgs.concat(perlArgs);
+    serverArgs = sshArgs.concat(perlArgsOpt);
   } else {
     serverCmd = perlCmd;
-    serverArgs = perlArgs;
+    serverArgs = perlArgsOpt;
   }
 
   console.log('cmd: ' + serverCmd + ' args: ' + serverArgs.join(' '));
