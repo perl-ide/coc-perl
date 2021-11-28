@@ -2,7 +2,8 @@
 
 Perl Language Server for [coc.nvim](https://github.com/neoclide/coc.nvim).
 
-This is a fork from [richterger/Perl-LanguageServer](https://github.com/richterger/Perl-LanguageServer/tree/master/clients/vscode/perl).
+This project is based on the official VSCode extension maintained at
+[Perl-LanguageServer](https://github.com/richterger/Perl-LanguageServer/tree/master/clients/vscode/perl).
 
 <img width='400' alt="coc-perl" src="https://user-images.githubusercontent.com/41639488/93008922-91aad880-f5b5-11ea-995b-3097806a4327.png">
 
@@ -10,10 +11,9 @@ This is a fork from [richterger/Perl-LanguageServer](https://github.com/richterg
 
 ### Requirements
 
-You need to install the perl module Perl::LanguageServer to make this extention working,
-e.g. run "cpan Perl::LanguageServer" on your target system.
-
-Please make sure to always run the newest version of Perl::LanguageServer as well.
+You need to install the perl module Perl::LanguageServer to make this extention working, e.g. run "cpan
+Perl::LanguageServer" on your target system or in your local library path in case you're using
+[PerlBrew](https://github.com/gugod/App-perlbrew).
 
 ### CocInstall
 
@@ -36,6 +36,28 @@ let g:coc_global_extensions = [
 ```vim
 Plug 'bmeneg/coc-perl', {'do': 'yarn install && yarn build'}
 ```
+
+### User options
+
+As user, you can change and pass different options to the language server, however, the options are tied to the server
+version being used. Because of that, make sure to always run the newest version of Perl::LanguageServer as well or at
+least the version supported here (`2.3.0`), in case the language server moves faster than this project.
+
+The options are placed in the `coc-settings.json` (which can be opened directly issuing `:CocConfig`) and has the following format:
+
+```json
+{
+    "perl": {
+        "enable": true,
+        "debugAdapterPort": "13604"
+        "logLevel": 1,
+    }
+}
+```
+
+The available options are exactly the same exposed by the 
+[language server](https://github.com/richterger/Perl-LanguageServer/tree/master/clients/vscode/perl#extension-settings). 
+It's even possible that if you find a bug with the options, this might also be a bug in the language server itself.
 
 ## Features
 
