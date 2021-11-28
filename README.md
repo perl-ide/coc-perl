@@ -1,5 +1,3 @@
-I don't write perl as much as I used to, so I'm losing motivation. I would appreciate it if you could create fork rather than submitting an issue.
-
 # coc-perl
 
 Perl Language Server for [coc.nvim](https://github.com/neoclide/coc.nvim).
@@ -49,3 +47,8 @@ Plug 'ulwlu/coc-perl', {'do': 'yarn install && yarn build'}
 * Call Signatures
 
 [See More](https://github.com/richterger/Perl-LanguageServer/tree/master/clients/vscode/perl#extension-settings).
+
+## Maintainers
+
+[bmeneg](https://github.com/bmeneg) - Maintainer  
+[ulwlu](https://github.com/ulwlu) - Project creator and former maintainer

@@ -2,11 +2,11 @@
   "name": "coc-perl",
   "description": "Perl Language Server for coc.nvim",
   "version": "1.0.2",
-  "author": "eyma22s.yu@gmail.com",
+  "author": "bmeneg@heredoc.io",
   "activationEvents": [
     "onLanguage:perl"
   ],
-  "bugs": "https://github.com/ryuta69/coc-perl/issues",
+  "bugs": "https://github.com/bmeneg/coc-perl/issues",
   "contributes": {
     "configuration": {
       "type": "object",
@@ -179,15 +179,15 @@
   "engines": {
     "coc": "^0.0.78"
   },
-  "homepage": "https://github.com/ryuta69/coc-perl",
+  "homepage": "https://github.com/bmeneg/coc-perl",
   "keywords": [
     "coc.nvim",
     "perl"
   ],
   "license": "MIT",
   "main": "dist/extension.js",
-  "publisher": "ryuta69 <eyma22s.yu@gmail.com>",
-  "repository": "https://github.com/ryuta69/coc-perl",
+  "publisher": "bmeneg <bmeneg@heredoc.io",
+  "repository": "https://github.com/bmeneg/coc-perl",
   "scripts": {
     "build": "webpack",
     "clean": "rimraf dist",
