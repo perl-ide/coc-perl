@@ -34,7 +34,7 @@ let g:coc_global_extensions = [
 ### vim-plug
 
 ```vim
-Plug 'ulwlu/coc-perl', {'do': 'yarn install && yarn build'}
+Plug 'bmeneg/coc-perl', {'do': 'yarn install && yarn build'}
 ```
 
 ## Features
