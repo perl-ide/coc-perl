@@ -1,5 +1,6 @@
 const path = require('path')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
   mode: 'none',
@@ -20,16 +21,13 @@ module.exports = {
     'coc.nvim': 'commonjs coc.nvim'
   },
   plugins: [
-    new ForkTsCheckerWebpackPlugin()
+    new ForkTsCheckerWebpackPlugin(),
+    new ESLintPlugin({
+      extensions: ['ts', 'js']
+    })
   ],
   module: {
     rules: [
-      {
-        enforce: 'pre',
-        test: /\.(ts|js)$/,
-        use: 'eslint-loader',
-        exclude: /node_modules/,
-      },
       {
         test: /\.(ts|js)$/,
         use: 'babel-loader',
