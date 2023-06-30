@@ -185,7 +185,7 @@
   ],
   "license": "MIT",
   "main": "dist/extension.js",
-  "publisher": "bmeneg <bmeneg@heredoc.io",
+  "publisher": "bmeneg <bmeneg@heredoc.io>",
   "repository": "https://github.com/bmeneg/coc-perl",
   "scripts": {
     "build": "webpack",
