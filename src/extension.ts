@@ -11,7 +11,61 @@ import {
   RevealOutputChannelOn,
 } from 'coc.nvim';
 
-function check_available_port(port: number): Promise<number> {
+interface IPerlConfig {
+  enable: boolean;
+
+  perlCmd: string;
+  perlArgs: string[];
+  perlInc: string[];
+
+  logFile: string;
+  logLevel: number;
+
+  debugAdapterPort: number;
+  debugAdapterPortRange: number;
+
+  sshCmd: string;
+  sshArgs: string[];
+  sshUser: string;
+  sshAddr: string;
+  sshPort: number;
+}
+
+// Default values for every extension config option.
+// These values are merged with what's coming from user's configuration file
+// in getConfig() function.
+const defaultPerlConfig: IPerlConfig = {
+  enable: true,
+  perlCmd: 'perl',
+  perlArgs: [],
+  perlInc: [],
+  logFile: '',
+  logLevel: 0,
+  debugAdapterPort: 13603,
+  debugAdapterPortRange: 100,
+  sshCmd: 'ssh',
+  sshArgs: [],
+  sshUser: '',
+  sshAddr: '',
+  sshPort: 0,
+};
+
+function getConfig(): IPerlConfig {
+  const wsConfig = workspace.getConfiguration().get('perl') as IPerlConfig;
+  // Merge both config from workspace and the default values, but prevent
+  // explicit null and undefined values coming from the workspace
+  // configuration to override the dafault values.
+  const config = {
+    ...defaultPerlConfig,
+    ...Object.fromEntries(
+      // eslint-disable-next-line
+      Object.entries(wsConfig).filter(([_, v]) => v !== null && v !== undefined)
+    ),
+  };
+  return config;
+}
+
+function checkPort(port: number): Promise<number> {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
     server.unref();
@@ -25,110 +79,97 @@ function check_available_port(port: number): Promise<number> {
   });
 }
 
-async function get_available_port(port: number, port_range: number): Promise<number> {
+async function getAvailablePort(
+  port: number,
+  port_range: number
+): Promise<number> {
   for (let i = 0; i < port_range; i++) {
     try {
       console.log('try if port ' + (port + i) + ' is available');
-      return await check_available_port(port + i);
+      return await checkPort(port + i);
     } catch (error: unknown) {
       const errorCode = error as NodeJS.ErrnoException;
       if (errorCode.code === undefined) {
         throw error;
       } else {
-        if (!['EADDRNOTAVAIL', 'EINVAL', 'EADDRINUSE'].includes(errorCode.code)) {
+        if (
+          !['EADDRNOTAVAIL', 'EINVAL', 'EADDRINUSE'].includes(errorCode.code)
+        ) {
           throw error;
         }
       }
     }
   }
 
-  return 0;
+  return port;
 }
 
 export async function activate(context: ExtensionContext) {
-  const config = workspace.getConfiguration('perl');
-  if (!config.get('enable')) {
-    console.log('extension "perl" is disabled');
+  const config = getConfig();
+  if (!config.enable) {
+    console.log('extension for Perl disabled');
     return;
   }
 
-  console.log('extension "perl" is now active');
-
-  let debug_adapter_port: number = config.get('debugAdapterPort') || 13603;
-  const debug_adapter_port_range: number = config.get('debugAdapterPortRange') || 100;
-  const perlCmd: string = config.get('perlCmd') || 'perl';
-  const perlArgs: string[] = config.get('perlArgs') || [];
-  const perlInc: string[] = config.get('perlInc') || [];
-  const perlIncOpt: string[] = perlInc.map((dir: string) => '-I' + dir);
-  const logFile: string = config.get('logFile') || '';
-  const logLevel: number = config.get('logLevel') || 0;
-  const client_version = '2.4.0';
-
+  const lsVersion = '2.4.0';
+  const perlIncOpt = config.perlInc.map((incDir: string) => '-I' + incDir);
   // Even though the user might have chosen a fixed port, we must run
   // through the range in case it's already in use.
-  debug_adapter_port = await get_available_port(debug_adapter_port, debug_adapter_port_range);
-  console.log('use ' + debug_adapter_port + ' as debug adapter port');
+  const debugAdapterPort = await getAvailablePort(
+    config.debugAdapterPort,
+    config.debugAdapterPortRange
+  );
+  console.log('use ' + debugAdapterPort + ' as debug adapter port');
 
-  const perlArgsOpt: string[] = [
+  const perlArgsOpt = [
     ...perlIncOpt,
-    ...perlArgs,
+    ...config.perlArgs,
     '-MPerl::LanguageServer',
     '-e',
     'Perl::LanguageServer::run',
     '--',
     '--port',
-    debug_adapter_port.toString(),
+    debugAdapterPort.toString(),
     '--log-level',
-    logLevel.toString(),
+    config.logLevel.toString(),
     '--log-file',
-    logFile,
+    config.logFile,
     '--version',
-    client_version,
+    lsVersion,
   ];
 
-  let sshPortOption = '-p';
-  let sshCmd: string = config.get('sshCmd') || '';
-  if (!sshCmd) {
-    if (/^win/.test(process.platform)) {
-      sshCmd = 'plink';
-      sshPortOption = '-P';
-    } else {
-      sshCmd = 'ssh';
-    }
+  let sshCmd = config.sshCmd;
+  let sshPortOpt = '-p';
+  if (/^win/.test(process.platform)) {
+    sshCmd = 'plink';
+    sshPortOpt = '-P';
   }
-  const sshArgs: string[] = config.get('sshArgs') || [];
-  const sshUser: string = config.get('sshUser') || '';
-  const sshAddr: string = config.get('sshAddr') || '';
-  const sshPort: string = config.get('sshPort') || '';
 
   let serverCmd: string;
-  let serverArgs: string[];
-
-  if (sshAddr && sshUser) {
+  let serverArgs: string[] = [];
+  if (config.sshAddr && config.sshUser) {
     serverCmd = sshCmd;
-    if (sshPort) {
-      sshArgs.push(sshPortOption, sshPort);
+    if (config.sshPort) {
+      serverArgs.push(sshPortOpt, config.sshPort.toString());
     }
-    sshArgs.push(
+    serverArgs.push(
       '-l',
-      sshUser,
-      sshAddr,
+      config.sshUser,
+      config.sshAddr,
       '-L',
-      debug_adapter_port + ':127.0.0.1:' + debug_adapter_port,
-      perlCmd
+      config.debugAdapterPort + ':127.0.0.1:' + config.debugAdapterPort,
+      config.perlCmd
     );
-    serverArgs = sshArgs.concat(perlArgsOpt);
+    serverArgs = serverArgs.concat(perlArgsOpt);
   } else {
-    serverCmd = perlCmd;
+    serverCmd = config.perlCmd;
     serverArgs = perlArgsOpt;
   }
-
   console.log('cmd: ' + serverCmd + ' args: ' + serverArgs.join(' '));
 
-  const debugArgs = serverArgs.concat(['--debug']);
   const serverOptions: ServerOptions = {
     run: { command: serverCmd, args: serverArgs },
-    debug: { command: serverCmd, args: debugArgs },
+    debug: { command: serverCmd, args: serverArgs.concat(['--debug']) },
   };
 
   // Options to control the language client
@@ -143,7 +184,7 @@ export async function activate(context: ExtensionContext) {
   };
 
   // Create the language client and start the client.
-  const disposable = new LanguageClient(
+  const client = new LanguageClient(
     'perl',
     'Perl Language Server',
     serverOptions,
@@ -152,5 +193,5 @@ export async function activate(context: ExtensionContext) {
 
   // Push the disposable to the context's subscriptions so that the
   // client can be deactivated on extension deactivation
-  context.subscriptions.push(disposable);
+  context.subscriptions.push(client);
 }
