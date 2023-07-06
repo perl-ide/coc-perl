@@ -1,7 +1,7 @@
 {
   "name": "coc-perl",
   "description": "Perl Language Server for coc.nvim",
-  "version": "1.0.2",
+  "version": "1.2.0",
   "author": "bmeneg@heredoc.io",
   "activationEvents": [
     "onLanguage:perl"
@@ -164,7 +164,7 @@
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "babel-loader": "^8.2.3",
-    "coc.nvim": "^0.0.80",
+    "coc.nvim": "^0.0.82",
     "eslint": "^8.3.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -176,7 +176,7 @@
     "webpack-cli": "^4.9.1"
   },
   "engines": {
-    "coc": "^0.0.78"
+    "coc": "^0.0.82"
   },
   "homepage": "https://github.com/bmeneg/coc-perl",
   "keywords": [
@@ -185,7 +185,7 @@
   ],
   "license": "MIT",
   "main": "dist/extension.js",
-  "publisher": "bmeneg <bmeneg@heredoc.io",
+  "publisher": "bmeneg <bmeneg@heredoc.io>",
   "repository": "https://github.com/bmeneg/coc-perl",
   "scripts": {
     "build": "webpack",

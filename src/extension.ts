@@ -1,7 +1,29 @@
+/* AUTHOR NOTES
+ *
+ * Debug Adapter Protocol:
+ *
+ * DAP is not supported by coc-nvim like it's on VSCode. Because of that,
+ * this extension code lacks the parts of the official VSCode extension code
+ * related to DAP, however, some configuration options related to DAP are
+ * still present, but are basically NOP for coc-nvim. These will be marked
+ * with a comment containing 'DAP-SUPPORT'.
+ *
+ * You might ask why to keep DAP code partially ported? We want to keep the
+ * ability for a user to use the VSCode configuration file as-is, thus we
+ * need to keep track of some variables (even though NOP on coc-nvim) so no
+ * errors are thrown at runtime. We could keep track of DAP-related vars and
+ * ignore/remove them at runtime, but keep the code similar to the original
+ * extension prevent us, maintainer, from pulling my hear some times.
+ *
+ * Bruno Meneguele <bmeneg@heredoc.io> 2023
+ */
+
 'use strict';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+import * as net from 'net';
 import {
+  window,
   workspace,
   ExtensionContext,
   LanguageClient,
@@ -10,83 +32,253 @@ import {
   RevealOutputChannelOn,
 } from 'coc.nvim';
 
-export function activate(context: ExtensionContext): void {
-  const config = workspace.getConfiguration('perl');
-  if (!config.get('enable')) {
-    console.log('extension "perl" is disabled');
-    return;
+interface IPerlConfig {
+  enable: boolean;
+
+  perlCmd: string;
+  perlArgs: string[];
+  perlInc: string[];
+
+  // eslint-disable-next-line
+  env: any;
+
+  logFile: string;
+  logLevel: number;
+
+  // DAP-SUPPORT
+  debugAdapterPort: number;
+  debugAdapterPortRange: number;
+
+  sshCmd: string;
+  sshArgs: string[];
+  sshUser: string;
+  sshAddr: string;
+  sshPort: number;
+
+  containerCmd: string;
+  containerArgs: string[];
+  containerName: string;
+  containerMode: string;
+}
+
+// Default values for every extension config option.
+// These values are merged with what's coming from user's configuration file
+// in getConfig() function.
+const defaultPerlConfig: IPerlConfig = {
+  enable: true,
+  perlCmd: 'perl',
+  perlArgs: [],
+  perlInc: [],
+  env: {},
+  logFile: '',
+  logLevel: 0,
+  debugAdapterPort: 13603, // DAP-SUPPORT
+  debugAdapterPortRange: 100, // DAP-SUPPORT
+  sshCmd: 'ssh',
+  sshArgs: [],
+  sshUser: '',
+  sshAddr: '',
+  sshPort: 0,
+  containerCmd: '',
+  containerArgs: [],
+  containerName: '',
+  containerMode: 'exec',
+};
+
+function getConfig(): IPerlConfig {
+  const wsConfig = workspace.getConfiguration().get('perl') as IPerlConfig;
+  // Merge both config from workspace and the default values, but prevent
+  // explicit null and undefined values coming from the workspace
+  // configuration to override the dafault values.
+  const config = {
+    ...defaultPerlConfig,
+    ...Object.fromEntries(
+      // eslint-disable-next-line
+      Object.entries(wsConfig).filter(([_, v]) => v !== null && v !== undefined)
+    ),
+  };
+  return config;
+}
+
+// DAP-SUPPORT
+function checkPort(port: number): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.unref();
+    server.on('error', reject);
+
+    server.listen({ host: '127.0.0.1', port: port }, () => {
+      server.close(() => {
+        resolve(port);
+      });
+    });
+  });
+}
+
+// DAP-SUPPORT
+async function getAvailablePort(
+  port: number,
+  port_range: number
+): Promise<number> {
+  for (let i = 0; i < port_range; i++) {
+    try {
+      console.log('try if port ' + (port + i) + ' is available');
+      return await checkPort(port + i);
+    } catch (error: unknown) {
+      const errorCode = error as NodeJS.ErrnoException;
+      if (errorCode.code === undefined) {
+        throw error;
+      } else {
+        if (
+          !['EADDRNOTAVAIL', 'EINVAL', 'EADDRINUSE'].includes(errorCode.code)
+        ) {
+          throw error;
+        }
+      }
+    }
   }
 
+  return port;
+}
+
+function resolveWorkspaceFolder(path: string, resource?: string): string {
+  if (path.includes('${workspaceFolder}')) {
+    const ws =
+      workspace.getWorkspaceFolder(resource as string) ??
+      workspace.workspaceFolders?.[0];
+    const sub = ws?.uri ?? '';
+    return path.replace('${workspaceFolder}', sub);
+  }
+  return path;
+}
+
+function buildContainerArgs(
+  containerCmd: string,
+  containerArgs: string[],
+  containerName: string,
+  containerMode: string
+): string[] {
+  if (containerMode != 'exec') containerMode = 'run';
+
+  if (containerCmd) {
+    if (containerArgs.length == 0) {
+      if (containerCmd == 'docker') {
+        containerArgs.push(containerMode);
+        if (containerMode == 'run') containerArgs.push('--rm');
+        containerArgs.push('-i', containerName);
+      } else if (containerCmd == 'docker-compose') {
+        containerArgs.push(containerMode);
+        if (containerMode == 'run') containerArgs.push('--rm');
+        containerArgs.push('--no-deps', '-T', containerName);
+      } else if (containerCmd == 'kubectl') {
+        containerArgs.push('exec', containerName, '-i', '--');
+      } else if (containerCmd == 'devspace') {
+        containerArgs.push('--silent ', 'enter');
+        if (containerName) containerArgs.push('-c', containerName);
+        containerArgs.push('--');
+      }
+    }
+  }
+
+  return containerArgs;
+}
+
+export async function activate(context: ExtensionContext) {
+  const config = getConfig();
+  if (!config.enable) {
+    console.log('extension for Perl disabled');
+    return;
+  }
   console.log('extension "perl" is now active');
 
-  const debug_adapter_port: string = config.get('debugAdapterPort') || '13603';
-  const perlCmd: string = config.get('perlCmd') || 'perl';
-  const perlArgs: string[] = config.get('perlArgs') || [];
-  const perlInc: string[] = config.get('perlInc') || [];
-  const perlIncOpt: string[] = perlInc.map((dir: string) => '-I' + dir);
-  const logFile: string = config.get('logFile') || '';
-  const logLevel: number = config.get('logLevel') || 0;
-  const client_version = '2.3.0';
+  const lsVersion = '2.4.0';
+  const resource = window.activeTextEditor?.document.uri;
+  const perlIncOpt = config.perlInc.map((incDir: string): string => {
+    return '-I' + resolveWorkspaceFolder(incDir, resource);
+  });
+  const perlCmd = resolveWorkspaceFolder(config.perlCmd, resource);
+
   const perlArgsOpt: string[] = [
     ...perlIncOpt,
-    ...perlArgs,
+    ...config.perlArgs,
     '-MPerl::LanguageServer',
     '-e',
     'Perl::LanguageServer::run',
     '--',
-    '--port',
-    debug_adapter_port,
     '--log-level',
-    logLevel.toString(),
+    config.logLevel.toString(),
     '--log-file',
-    logFile,
+    config.logFile,
     '--version',
-    client_version,
+    lsVersion,
   ];
 
-  let sshPortOption = '-p';
-  let sshCmd: string = config.get('sshCmd') || '';
-  if (!sshCmd) {
-    if (/^win/.test(process.platform)) {
-      sshCmd = 'plink';
-      sshPortOption = '-P';
-    } else {
-      sshCmd = 'ssh';
-    }
+  // DAP-SUPPORT
+  let debugAdapterPort = config.debugAdapterPort;
+  if (!config.containerCmd) {
+    debugAdapterPort = await getAvailablePort(
+      config.debugAdapterPort,
+      config.debugAdapterPortRange
+    );
+    console.log('use ' + debugAdapterPort + ' as debug adapter port');
+    perlArgsOpt.push('--port', debugAdapterPort.toString());
   }
-  const sshArgs: string[] = config.get('sshArgs') || [];
-  const sshUser: string = config.get('sshUser') || '';
-  const sshAddr: string = config.get('sshAddr') || '';
-  const sshPort: string = config.get('sshPort') || '';
+
+  let sshCmd = config.sshCmd;
+  let sshPortOpt = '-p';
+  if (/^win/.test(process.platform)) {
+    sshCmd = 'plink';
+    sshPortOpt = '-P';
+  }
+
+  const containerArgsOpt: string[] = buildContainerArgs(
+    config.containerCmd,
+    config.containerArgs,
+    config.containerName,
+    config.containerMode
+  );
 
   let serverCmd: string;
-  let serverArgs: string[];
-
-  if (sshAddr && sshUser) {
+  let serverArgs: string[] = [];
+  if (config.sshAddr && config.sshUser) {
     serverCmd = sshCmd;
-    if (sshPort) {
-      sshArgs.push(sshPortOption, sshPort);
+    if (config.sshPort) {
+      serverArgs.push(sshPortOpt, config.sshPort.toString());
     }
-    sshArgs.push(
+    serverArgs.push(
       '-l',
-      sshUser,
-      sshAddr,
+      config.sshUser,
+      config.sshAddr,
       '-L',
-      debug_adapter_port + ':127.0.0.1:' + debug_adapter_port,
-      perlCmd
+      config.debugAdapterPort + ':127.0.0.1:' + config.debugAdapterPort // DAP-SUPPORT
     );
-    serverArgs = sshArgs.concat(perlArgsOpt);
+    if (config.containerCmd) {
+      serverArgs.push(config.containerCmd);
+      serverArgs = serverArgs.concat(containerArgsOpt);
+    }
+    serverArgs = serverArgs.concat(perlCmd, perlArgsOpt);
   } else {
-    serverCmd = perlCmd;
-    serverArgs = perlArgsOpt;
+    if (config.containerCmd) {
+      serverCmd = config.containerCmd;
+      serverArgs = containerArgsOpt.concat(perlCmd, perlArgsOpt);
+    } else {
+      serverCmd = perlCmd;
+      serverArgs = perlArgsOpt;
+    }
   }
-
   console.log('cmd: ' + serverCmd + ' args: ' + serverArgs.join(' '));
 
-  const debugArgs = serverArgs.concat(['--debug']);
   const serverOptions: ServerOptions = {
-    run: { command: serverCmd, args: serverArgs },
-    debug: { command: serverCmd, args: debugArgs },
+    run: {
+      command: serverCmd,
+      args: serverArgs,
+      options: { env: config.env },
+    },
+    debug: {
+      command: serverCmd,
+      args: serverArgs.concat(['--debug']),
+      options: { env: config.env },
+    },
   };
 
   // Options to control the language client
@@ -101,7 +293,7 @@ export function activate(context: ExtensionContext): void {
   };
 
   // Create the language client and start the client.
-  const disposable = new LanguageClient(
+  const client = new LanguageClient(
     'perl',
     'Perl Language Server',
     serverOptions,
@@ -110,5 +302,5 @@ export function activate(context: ExtensionContext): void {
 
   // Push the disposable to the context's subscriptions so that the
   // client can be deactivated on extension deactivation
-  context.subscriptions.push(disposable);
+  context.subscriptions.push(client);
 }

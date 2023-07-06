@@ -41,7 +41,7 @@ Plug 'bmeneg/coc-perl', {'do': 'yarn install && yarn build'}
 
 As user, you can change and pass different options to the language server, however, the options are tied to the server
 version being used. Because of that, make sure to always run the newest version of Perl::LanguageServer as well or at
-least the version supported here (`2.3.0`), in case the language server moves faster than this project.
+least the version supported here (`2.4.0`), in case the language server moves faster than this project.
 
 The options are placed in the `coc-settings.json` (which can be opened directly issuing `:CocConfig`) and has the following format:
 
@@ -49,7 +49,6 @@ The options are placed in the `coc-settings.json` (which can be opened directly 
 {
     "perl": {
         "enable": true,
-        "debugAdapterPort": "13604"
         "logLevel": 1,
     }
 }
@@ -69,6 +68,21 @@ It's even possible that if you find a bug with the options, this might also be a
 * Call Signatures
 
 [See More](https://github.com/richterger/Perl-LanguageServer/tree/master/clients/vscode/perl#extension-settings).
+
+## Differences from VSCode extension
+
+Unfortunatelly not all features supported in the original VSCode extension are available in `coc-perl` due to the
+differences between VSCode extension core code and `coc-nvim` code. The Language Server Protocol is fully compatible,
+however the [Debug Adapter Protocol (DAP)](https://microsoft.github.io/debug-adapter-protocol/) is missing from
+`coc-nvim`, cause the features related to "debugging" the code non-existent on neovim.
+
+For those navigating the extension code will notice some "DAP-related" variables are defined and "used", but in
+reality they have no operation at all, serving just as placeholders to allow transparent use of VSCode extension
+configuration file. Working is being done in different fronts to get DAP support to neovim as soon as possible, but a
+third plugin might be required (besides `coc-nvim` and `coc-perl`).
+
+Whenever a decent and full-featured support lands through another project, instructions will be presented in this
+README file.
 
 ## Maintainers
 
