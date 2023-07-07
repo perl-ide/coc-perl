@@ -1,201 +1,252 @@
 {
-  "name": "coc-perl",
-  "description": "Perl Language Server for coc.nvim",
-  "version": "1.2.0",
-  "author": "bmeneg@heredoc.io",
-  "activationEvents": [
-    "onLanguage:perl"
-  ],
-  "bugs": "https://github.com/bmeneg/coc-perl/issues",
-  "contributes": {
-    "configuration": {
-      "type": "object",
-      "title": "Perl configuration",
-      "properties": {
-        "perl.enable": {
-          "type": "boolean",
-          "default": true,
-          "description": "enable/disable this extension"
-        },
-        "perl.logLevel": {
-          "type": "integer",
-          "default": 0,
-          "description": "Log level 0-2"
-        },
-        "perl.sshAddr": {
-          "type": "string",
-          "default": null,
-          "description": "ip address of remote system"
-        },
-        "perl.sshPort": {
-          "type": "string",
-          "default": null,
-          "description": "optional, port for ssh to remote system"
-        },
-        "perl.sshUser": {
-          "type": "string",
-          "default": null,
-          "description": "user for ssh login"
-        },
-        "perl.sshCmd": {
-          "type": "string",
-          "default": null,
-          "description": "defaults to ssh on unix and plink on windows"
-        },
-        "perl.sshWorkspaceRoot": {
-          "type": "string",
-          "default": null,
-          "description": "path of the workspace root on remote system"
-        },
-        "perl.perlCmd": {
-          "type": "string",
-          "default": null,
-          "description": "defaults to perl"
-        },
-        "perl.sshArgs": {
-          "type": "string",
-          "default": null,
-          "description": "optional arguments for ssh"
-        },
-        "perl.pathMap": {
-          "type": "array",
-          "default": null,
-          "description": "mapping of local to remote paths"
-        },
-        "perl.perlInc": {
-          "type": "array",
-          "default": null,
-          "description": "array with paths to add to perl library path"
-        },
-        "perl.fileFilter": {
-          "type": "array",
-          "default": null,
-          "description": "array for filtering perl file, defaults to *.pm|*.pl"
-        },
-        "perl.ignoreDirs": {
-          "type": "array",
-          "default": null,
-          "description": "directories to ignore, defaults to .vscode, .git, .svn"
-        },
-        "perl.showLocalVars": {
-          "type": "boolean",
-          "default": false,
-          "description": "if true, show also local variables in symbol view"
-        },
-        "perl.debugAdapterPort": {
-          "type": "string",
-          "default": "13603",
-          "description": "port to use for connection between vscode and debug adapter inside Perl::LanguageServer. On a multi user system every user must use a differnt port."
-        }
-      }
-    },
-    "breakpoints": [
-      {
-        "language": "perl"
-      }
-    ],
-    "debuggers": [
-      {
-        "type": "perl",
-        "label": "Perl Debug",
-        "languages": [
-          "perl"
-        ],
-        "program": "./out/dbgforward.js",
-        "runtime": "node",
-        "configurationAttributes": {
-          "launch": {
-            "required": [
-              "program"
-            ],
-            "properties": {
-              "program": {
-                "type": "string",
-                "description": "Absolute path to perl file that should be debugged.",
-                "default": "${workspaceFolder}/${relativeFile}"
-              },
-              "stopOnEntry": {
-                "type": "boolean",
-                "description": "Automatically stop after launch.",
-                "default": true
-              },
-              "args": {
-                "type": "array",
-                "description": "optional, array with arguments for perl program.",
-                "default": null
-              },
-              "env": {
-                "type": "array",
-                "description": "optional, object with environment settings.",
-                "default": null
-              },
-              "cwd": {
-                "type": "array",
-                "description": "optional, change working directory.",
-                "default": null
-              },
-              "reloadModules": {
-                "type": "boolean",
-                "description": "Automatically reload changed Perl modules while debugging.",
-                "default": true
-              }
-            }
-          }
-        },
-        "initialConfigurations": [
-          {
-            "type": "perl",
-            "request": "launch",
-            "name": "Perl-Debug",
-            "program": "${workspaceFolder}/${relativeFile}",
-            "stopOnEntry": true,
-            "reloadModules": true
-          }
-        ]
-      }
-    ]
-  },
-  "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/plugin-proposal-class-properties": "^7.16.0",
-    "@babel/preset-env": "^7.16.4",
-    "@babel/preset-typescript": "^7.16.0",
-    "@types/node": "^16.11.10",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
-    "babel-loader": "^8.2.3",
-    "coc.nvim": "^0.0.82",
-    "eslint": "^8.3.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "fork-ts-checker-webpack-plugin": "^6.4.2",
-    "prettier": "^2.5.0",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.5.2",
-    "webpack": "^5.64.4",
-    "webpack-cli": "^4.9.1"
-  },
-  "engines": {
-    "coc": "^0.0.82"
-  },
-  "homepage": "https://github.com/bmeneg/coc-perl",
-  "keywords": [
-    "coc.nvim",
-    "perl"
-  ],
-  "license": "MIT",
-  "main": "dist/extension.js",
-  "publisher": "bmeneg <bmeneg@heredoc.io>",
-  "repository": "https://github.com/bmeneg/coc-perl",
-  "scripts": {
-    "build": "webpack",
-    "clean": "rimraf dist",
-    "eslint": "eslint --fix 'src/**/*.ts'",
-    "typecheck": "tsc -w"
-  },
-  "dependencies": {
-    "core-js": "^3.19.1",
-    "eslint-webpack-plugin": "^3.1.1",
-    "regenerator-runtime": "^0.13.9"
-  }
+	"name": "coc-perl",
+	"displayName": "Perl",
+	"description": "Perl Language Server for coc.nvim",
+	"version": "1.2.1",
+	"author": "bmeneg@heredoc.io",
+	"homepage": "https://github.com/bmeneg/coc-perl",
+	"publisher": "bmeneg <bmeneg@heredoc.io>",
+	"repository": "git@github.com:bmeneg/coc-perl.git",
+	"bugs": "https://github.com/bmeneg/coc-perl/issues",
+	"license": "MIT",
+	"categories": [
+		"Programming Languages",
+		"Linters"
+	],
+	"keywords": [
+		"coc.nvim",
+		"perl",
+		"lsp"
+	],
+	"engines": {
+		"coc": "^0.0.82"
+	},
+	"activationEvents": [
+		"onLanguage:perl"
+	],
+	"main": "dist/extension.js",
+	"contributes": {
+		"configuration": {
+			"type": "object",
+			"title": "Perl configuration",
+			"properties": {
+				"perl.enable": {
+					"type": "boolean",
+					"default": true,
+					"description": "enable/disable this extension"
+				},
+				"perl.logLevel": {
+					"type": "integer",
+					"default": 0,
+					"description": "Log level 0-2"
+				},
+				"perl.logFile": {
+					"type": "string",
+					"default": null,
+					"description": "If set, log output is written to the given logfile, instead of displaying it in the vscode output pane. Log output is always appended so you are responsible for rotating the file."
+				},
+				"perl.sshAddr": {
+					"type": "string",
+					"default": null,
+					"description": "ip address of remote system"
+				},
+				"perl.sshPort": {
+					"type": "string",
+					"default": null,
+					"description": "optional, port for ssh to remote system"
+				},
+				"perl.sshUser": {
+					"type": "string",
+					"default": null,
+					"description": "user for ssh login"
+				},
+				"perl.sshCmd": {
+					"type": "string",
+					"default": null,
+					"description": "defaults to ssh on unix and plink on windows"
+				},
+				"perl.sshWorkspaceRoot": {
+					"type": "string",
+					"default": null,
+					"description": "path of the workspace root on remote system"
+				},
+				"perl.perlCmd": {
+					"type": "string",
+					"default": null,
+					"description": "defaults to perl"
+				},
+				"perl.sshArgs": {
+					"type": "array",
+					"default": null,
+					"description": "optional arguments for ssh"
+				},
+				"perl.containerCmd": {
+					"type": "string",
+					"default": null,
+					"description": "If set Perl::LanguageServer can run inside a container. Options are: 'docker', 'docker-compose', 'kubectl'"
+				},
+				"perl.containerArgs": {
+					"type": "array",
+					"default": null,
+					"description": "arguments for containerCmd. Varies depending on containerCmd."
+				},
+				"perl.containerMode": {
+					"type": "string",
+					"default": "exec",
+					"description": "To start a new container, set to 'run', to execute inside an existing container set to 'exec'. Note: kubectl only supports 'exec'"
+				},
+				"perl.containerName": {
+					"type": "string",
+					"default": null,
+					"description": "Image to start or container to exec inside or pod to use"
+				},
+				"perl.env": {
+					"type": "object",
+					"description": "object with environment settings for command that starts the LanguageServer, e.g. can be used to set KUBECONFIG.",
+					"default": null
+				},
+				"perl.pathMap": {
+					"type": "array",
+					"default": null,
+					"description": "mapping of local to remote paths"
+				},
+				"perl.perlInc": {
+					"type": "array",
+					"default": null,
+					"description": "array with paths to add to perl library path. This setting is used by the syntax checker and for the debuggee and also for the LanguageServer itself. perl.perlInc should be absolute paths."
+				},
+				"perl.fileFilter": {
+					"type": "array",
+					"default": null,
+					"description": "array for filtering perl file, defaults to *.pm|*.pl"
+				},
+				"perl.ignoreDirs": {
+					"type": "array",
+					"default": null,
+					"description": "directories to ignore, defaults to .vscode, .git, .svn"
+				},
+				"perl.cacheDir": {
+					"type": "string",
+					"default": null,
+					"description": "directory for caching of parsed symbols, if the directory does not exists, it will be created, defaults to ${workspace}/.vscode/perl-lang. This should be one unqiue directory per project and an absolute path."
+				},
+				"perl.showLocalVars": {
+					"type": "boolean",
+					"default": false,
+					"description": "if true, show also local variables in symbol view"
+				},
+				"perl.disableCache": {
+					"type": "boolean",
+					"default": false,
+					"description": "if true, the LanguageServer will not cache the result of parsing source files on disk, so it can be used within readonly directories"
+				},
+				"perl.debugAdapterPort": {
+					"type": "integer",
+					"default": 13603,
+					"description": "port to use for connection between vscode and debug adapter inside Perl::LanguageServer. On a multi user system every user must use a different port."
+				},
+				"perl.debugAdapterPortRange": {
+					"type": "integer",
+					"default": 100,
+					"description": "if debugAdapterPort is in use try ports from debugAdapterPort to debugAdapterPort + debugAdapterPortRange. Default 100."
+				}
+			}
+		},
+		"breakpoints": [
+			{
+				"language": "perl"
+			}
+		],
+		"debuggers": [
+			{
+				"type": "perl",
+				"label": "Perl Debug",
+				"languages": [
+					"perl"
+				],
+				"program": "./out/dbgforward.js",
+				"runtime": "node",
+				"configurationAttributes": {
+					"launch": {
+						"required": [
+							"program"
+						],
+						"properties": {
+							"program": {
+								"type": "string",
+								"description": "Absolute path to perl file that should be debugged.",
+								"default": "${workspaceFolder}/${relativeFile}"
+							},
+							"stopOnEntry": {
+								"type": "boolean",
+								"description": "Automatically stop after launch.",
+								"default": true
+							},
+							"args": {
+								"type": "array",
+								"description": "optional, array with arguments for perl program.",
+								"default": null
+							},
+							"env": {
+								"type": "array",
+								"description": "optional, object with environment settings.",
+								"default": null
+							},
+							"cwd": {
+								"type": "array",
+								"description": "optional, change working directory.",
+								"default": null
+							},
+							"reloadModules": {
+								"type": "boolean",
+								"description": "Automatically reload changed Perl modules while debugging.",
+								"default": true
+							}
+						}
+					}
+				},
+				"initialConfigurations": [
+					{
+						"type": "perl",
+						"request": "launch",
+						"name": "Perl-Debug",
+						"program": "${workspaceFolder}/${relativeFile}",
+						"stopOnEntry": true,
+						"reloadModules": true
+					}
+				]
+			}
+		]
+	},
+	"devDependencies": {
+		"@babel/core": "^7.16.0",
+		"@babel/plugin-proposal-class-properties": "^7.16.0",
+		"@babel/preset-env": "^7.16.4",
+		"@babel/preset-typescript": "^7.16.0",
+		"@types/node": "^16.11.10",
+		"@typescript-eslint/eslint-plugin": "^5.4.0",
+		"@typescript-eslint/parser": "^5.4.0",
+		"babel-loader": "^8.2.3",
+		"coc.nvim": "^0.0.82",
+		"eslint": "^8.3.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-prettier": "^4.0.0",
+		"fork-ts-checker-webpack-plugin": "^6.4.2",
+		"prettier": "^2.5.0",
+		"rimraf": "^3.0.2",
+		"typescript": "^4.5.2",
+		"webpack": "^5.64.4",
+		"webpack-cli": "^4.9.1"
+	},
+	"scripts": {
+		"build": "webpack",
+		"clean": "rimraf dist",
+		"eslint": "eslint --fix 'src/**/*.ts'",
+		"typecheck": "tsc -w"
+	},
+	"dependencies": {
+		"core-js": "^3.19.1",
+		"eslint-webpack-plugin": "^3.1.1",
+		"regenerator-runtime": "^0.13.9"
+	}
 }
