@@ -32,6 +32,10 @@ import {
   RevealOutputChannelOn,
 } from 'coc.nvim';
 
+/* The IPerlConfig interface doesn't contain all configuration options
+ * because just some of them are necessary for Perl interpreter before the
+ * actual langague server startup. The remainer of the options are kept
+ * and used by coc.nvim through the package.json file */
 interface IPerlConfig {
   enable: boolean;
 
@@ -61,43 +65,8 @@ interface IPerlConfig {
   containerMode: string;
 }
 
-// Default values for every extension config option.
-// These values are merged with what's coming from user's configuration file
-// in getConfig() function.
-const defaultPerlConfig: IPerlConfig = {
-  enable: true,
-  perlCmd: 'perl',
-  perlArgs: [],
-  perlInc: [],
-  env: {},
-  logFile: '',
-  logLevel: 0,
-  debugAdapterPort: 13603, // DAP-SUPPORT
-  debugAdapterPortRange: 100, // DAP-SUPPORT
-  sshCmd: 'ssh',
-  sshArgs: [],
-  sshUser: '',
-  sshAddr: '',
-  sshPort: 0,
-  containerCmd: '',
-  containerArgs: [],
-  containerName: '',
-  containerMode: 'exec',
-};
-
 function getConfig(): IPerlConfig {
-  const wsConfig = workspace.getConfiguration().get('perl') as IPerlConfig;
-  // Merge both config from workspace and the default values, but prevent
-  // explicit null and undefined values coming from the workspace
-  // configuration to override the dafault values.
-  const config = {
-    ...defaultPerlConfig,
-    ...Object.fromEntries(
-      // eslint-disable-next-line
-      Object.entries(wsConfig).filter(([_, v]) => v !== null && v !== undefined)
-    ),
-  };
-  return config;
+  return workspace.getConfiguration().get('perl') as IPerlConfig;
 }
 
 // DAP-SUPPORT
@@ -197,7 +166,6 @@ export async function activate(context: ExtensionContext) {
     return '-I' + resolveWorkspaceFolder(incDir, resource);
   });
   const perlCmd = resolveWorkspaceFolder(config.perlCmd, resource);
-
   const perlArgsOpt: string[] = [
     ...perlIncOpt,
     ...config.perlArgs,
