@@ -2,7 +2,7 @@
 	"name": "coc-perl",
 	"displayName": "Perl",
 	"description": "Perl Language Server for coc.nvim",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"author": "bmeneg@heredoc.io",
 	"homepage": "https://github.com/bmeneg/coc-perl",
 	"publisher": "bmeneg <bmeneg@heredoc.io>",
@@ -144,7 +144,11 @@
 				},
 				"perl.ignoreDirs": {
 					"type": "array",
-					"default": [],
+					"default": [
+						".vscode",
+						".git",
+						".svn"
+					],
 					"description": "directories to ignore, defaults to .vscode, .git, .svn"
 				},
 				"perl.cacheDir": {
