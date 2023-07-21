@@ -2,7 +2,7 @@
 	"name": "coc-perl",
 	"displayName": "Perl",
 	"description": "Perl Language Server for coc.nvim",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"author": "bmeneg@heredoc.io",
 	"homepage": "https://github.com/bmeneg/coc-perl",
 	"publisher": "bmeneg <bmeneg@heredoc.io>",
@@ -123,6 +123,11 @@
 							"type": "string"
 						}
 					}
+				},
+				"perl.disablePassEnv": {
+					"type": "boolean",
+					"description": "enviroment from vscode will be passed to debuggee, syntax check and perltidy. If set to true, no enviroment variables will be passed.",
+					"default": false
 				},
 				"perl.pathMap": {
 					"type": "array",

@@ -45,6 +45,7 @@ interface IPerlConfig {
 
   // eslint-disable-next-line
   env: any;
+  disablePassEnv: boolean;
 
   logFile: string;
   logLevel: number;
@@ -160,7 +161,7 @@ export async function activate(context: ExtensionContext) {
   }
   console.log('extension "perl" is now active');
 
-  const lsVersion = '2.4.0';
+  const lsVersion = '2.5.0';
   const resource = window.activeTextEditor?.document.uri;
   const perlIncOpt = config.perlInc.map((incDir: string): string => {
     return '-I' + resolveWorkspaceFolder(incDir, resource);
@@ -190,6 +191,24 @@ export async function activate(context: ExtensionContext) {
     );
     console.log('use ' + debugAdapterPort + ' as debug adapter port');
     perlArgsOpt.push('--port', debugAdapterPort.toString());
+  }
+
+  // eslint-disable-next-line
+  let env: any = {}
+  if (!config.disablePassEnv) {
+    for (const k in process.env) {
+      env[k] = process.env[k];
+    }
+  }
+  if (Object.keys(config.env).length > 0) {
+    for (const k in config.env) {
+      env[k] = config.env[k];
+    }
+  }
+  if (Object.keys(env).length > 0) {
+    for (const k in env) {
+      console.log('env: ' + k + ' = ' + env[k]);
+    }
   }
 
   let sshCmd = config.sshCmd;
@@ -240,12 +259,12 @@ export async function activate(context: ExtensionContext) {
     run: {
       command: serverCmd,
       args: serverArgs,
-      options: { env: config.env },
+      options: { env: env },
     },
     debug: {
       command: serverCmd,
       args: serverArgs.concat(['--debug']),
-      options: { env: config.env },
+      options: { env: env },
     },
   };
 
