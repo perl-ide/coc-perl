@@ -2,7 +2,7 @@
 	"name": "coc-perl",
 	"displayName": "Perl",
 	"description": "Perl Language Server for coc.nvim",
-	"version": "1.2.3",
+	"version": "1.3.0",
 	"author": "bmeneg@heredoc.io",
 	"homepage": "https://github.com/bmeneg/coc-perl",
 	"publisher": "bmeneg <bmeneg@heredoc.io>",

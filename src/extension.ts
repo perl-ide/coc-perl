@@ -136,6 +136,11 @@ function buildContainerArgs(
         containerArgs.push(containerMode);
         if (containerMode == 'run') containerArgs.push('--rm');
         containerArgs.push('-i', containerName);
+      } else if (containerCmd == 'podman') {
+        containerArgs.push(containerMode);
+        if (containerMode == 'run')
+          containerArgs.push('--rm');
+        containerArgs.push('-i', containerName);
       } else if (containerCmd == 'docker-compose') {
         containerArgs.push(containerMode);
         if (containerMode == 'run') containerArgs.push('--rm');
@@ -161,7 +166,7 @@ export async function activate(context: ExtensionContext) {
   }
   console.log('extension "perl" is now active');
 
-  const lsVersion = '2.5.0';
+  const lsVersion = '2.6.0';
   const resource = window.activeTextEditor?.document.uri;
   const perlIncOpt = config.perlInc.map((incDir: string): string => {
     return '-I' + resolveWorkspaceFolder(incDir, resource);
