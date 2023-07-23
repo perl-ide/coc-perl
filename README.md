@@ -41,7 +41,7 @@ Plug 'bmeneg/coc-perl', {'do': 'yarn install && yarn build'}
 
 As user, you can change and pass different options to the language server, however, the options are tied to the server
 version being used. Because of that, make sure to always run the newest version of Perl::LanguageServer as well or at
-least the version supported here (`2.5.0`), in case the language server moves faster than this project.
+least the version supported here (`2.6.0`), in case the language server moves faster than this project.
 
 The options are placed in the `coc-settings.json` (which can be opened directly issuing `:CocConfig`) and has the following format:
 
