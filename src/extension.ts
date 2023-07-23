@@ -138,8 +138,7 @@ function buildContainerArgs(
         containerArgs.push('-i', containerName);
       } else if (containerCmd == 'podman') {
         containerArgs.push(containerMode);
-        if (containerMode == 'run')
-          containerArgs.push('--rm');
+        if (containerMode == 'run') containerArgs.push('--rm');
         containerArgs.push('-i', containerName);
       } else if (containerCmd == 'docker-compose') {
         containerArgs.push(containerMode);
