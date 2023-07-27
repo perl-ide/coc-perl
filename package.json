@@ -24,6 +24,10 @@
 	"activationEvents": [
 		"onLanguage:perl"
 	],
+	"files": [
+		"src/extension.ts",
+		"src/pls.ts"
+	],
 	"main": "dist/extension.js",
 	"contributes": {
 		"configuration": {
