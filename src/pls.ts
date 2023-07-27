@@ -31,11 +31,11 @@ import {
   RevealOutputChannelOn,
 } from 'coc.nvim';
 
-/* The IPerlConfig interface doesn't contain all configuration options
+/* The IPLSConfig interface doesn't contain all configuration options
  * because just some of them are necessary for Perl interpreter before the
  * actual langague server startup. The remainer of the options are kept
  * and used by coc.nvim through the package.json file */
-export interface IPerlConfig {
+export interface IPLSConfig {
   enable: boolean;
 
   perlCmd: string;
@@ -63,10 +63,6 @@ export interface IPerlConfig {
   containerArgs: string[];
   containerName: string;
   containerMode: string;
-}
-
-export function getConfig(): IPerlConfig {
-  return workspace.getConfiguration().get('perl') as IPerlConfig;
 }
 
 // DAP-SUPPORT
@@ -156,8 +152,9 @@ function buildContainerArgs(
   return containerArgs;
 }
 
-export async function getClient(): Promise<LanguageClient> {
-  const config = getConfig();
+export async function getPLSClient(
+  config: IPLSConfig
+): Promise<LanguageClient> {
   const lsVersion = '2.6.0';
   const resource = window.activeTextEditor?.document.uri;
   const perlIncOpt = config.perlInc.map((incDir: string): string => {
