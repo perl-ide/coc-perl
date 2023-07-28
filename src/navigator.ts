@@ -1,4 +1,5 @@
 /* AUTHOR NOTES
+ *
  * This extension code was slightly changed from the original version, which
  * can be retrieved from PerlNavigator GitHub repository, to fit coc.nvim
  * requirements and API. The differences will be maintained by coc-perl's
@@ -9,6 +10,7 @@
  */
 
 /* ORIGINAL LICENSE
+ *
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for
  * license information.
@@ -55,8 +57,8 @@ export function getNavigatorClient(config: INavigatorConfig): LanguageClient {
   };
 
   return new LanguageClient(
-    'perlnavigator',
-    'Perl Navigator LSP',
+    'PerlNavigator',
+    'Perl Language Server',
     serverOptions,
     clientOptions
   );

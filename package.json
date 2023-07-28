@@ -218,62 +218,62 @@
 					"default": "messages",
 					"description": "Traces the communication between VS Code and the language server."
 				},
-				"perl.pls.enable": {
+				"perl.p::ls.enable": {
 					"type": "boolean",
 					"default": false,
 					"description": "Enable Perl::LanguageServer server."
 				},
-				"perl.pls.logLevel": {
+				"perl.p::ls.logLevel": {
 					"type": "integer",
 					"default": 0,
 					"description": "Log level 0-2"
 				},
-				"perl.pls.logFile": {
+				"perl.p::ls.logFile": {
 					"type": "string",
 					"default": "",
 					"description": "If set, log output is written to the given logfile, instead of displaying it in the vscode output pane. Log output is always appended so you are responsible for rotating the file."
 				},
-				"perl.pls.sshAddr": {
+				"perl.p::ls.sshAddr": {
 					"type": "string",
 					"default": "",
 					"description": "ip address of remote system"
 				},
-				"perl.pls.sshPort": {
+				"perl.p::ls.sshPort": {
 					"type": "string",
 					"default": 0,
 					"description": "optional, port for ssh to remote system"
 				},
-				"perl.pls.sshUser": {
+				"perl.p::ls.sshUser": {
 					"type": "string",
 					"default": "",
 					"description": "user for ssh login"
 				},
-				"perl.pls.sshCmd": {
+				"perl.p::ls.sshCmd": {
 					"type": "string",
 					"default": "ssh",
 					"description": "defaults to ssh on unix and plink on windows"
 				},
-				"perl.pls.sshWorkspaceRoot": {
+				"perl.p::ls.sshWorkspaceRoot": {
 					"type": "string",
 					"default": "",
 					"description": "path of the workspace root on remote system"
 				},
-				"perl.pls.perlCmd": {
+				"perl.p::ls.perlCmd": {
 					"type": "string",
 					"default": "perl",
 					"description": "Perl interpreter binary"
 				},
-				"perl.pls.perlArgs": {
+				"perl.p::ls.perlArgs": {
 					"type": "array",
 					"default": [],
 					"description": "Perl interpreter arguments"
 				},
-				"perl.pls.sshArgs": {
+				"perl.p::ls.sshArgs": {
 					"type": "array",
 					"default": [],
 					"description": "optional arguments for ssh"
 				},
-				"perl.pls.containerCmd": {
+				"perl.p::ls.containerCmd": {
 					"type": "string",
 					"default": "",
 					"description": "If set Perl::LanguageServer can run inside a container. Options are: 'docker', 'docker-compose', 'kubectl'",
@@ -283,12 +283,12 @@
 						"kubectl"
 					]
 				},
-				"perl.pls.containerArgs": {
+				"perl.p::ls.containerArgs": {
 					"type": "array",
 					"default": [],
 					"description": "arguments for containerCmd. Varies depending on containerCmd."
 				},
-				"perl.pls.containerMode": {
+				"perl.p::ls.containerMode": {
 					"type": "string",
 					"default": "exec",
 					"description": "To start a new container, set to 'run', to execute inside an existing container set to 'exec'. Note: kubectl only supports 'exec'",
@@ -297,12 +297,12 @@
 						"run"
 					]
 				},
-				"perl.pls.containerName": {
+				"perl.p::ls.containerName": {
 					"type": "string",
 					"default": "",
 					"description": "Image to start or container to exec inside or pod to use"
 				},
-				"perl.pls.env": {
+				"perl.p::ls.env": {
 					"type": "object",
 					"default": {},
 					"description": "object with environment settings for command that starts the LanguageServer, e.g. can be used to set KUBECONFIG.",
@@ -312,22 +312,22 @@
 						}
 					}
 				},
-				"perl.pls.disablePassEnv": {
+				"perl.p::ls.disablePassEnv": {
 					"type": "boolean",
 					"description": "enviroment from vscode will be passed to debuggee, syntax check and perltidy. If set to true, no enviroment variables will be passed.",
 					"default": false
 				},
-				"perl.pls.pathMap": {
+				"perl.p::ls.pathMap": {
 					"type": "array",
 					"default": [],
 					"description": "mapping of local to remote paths"
 				},
-				"perl.pls.perlInc": {
+				"perl.p::ls.perlInc": {
 					"type": "array",
 					"default": [],
 					"description": "array with paths to add to perl library path. This setting is used by the syntax checker and for the debuggee and also for the LanguageServer itself. perlInc should be absolute paths."
 				},
-				"perl.pls.fileFilter": {
+				"perl.p::ls.fileFilter": {
 					"type": "array",
 					"default": [
 						".pl",
@@ -335,7 +335,7 @@
 					],
 					"description": "array for filtering perl file, defaults to *.pm|*.pl"
 				},
-				"perl.pls.ignoreDirs": {
+				"perl.p::ls.ignoreDirs": {
 					"type": "array",
 					"default": [
 						".vscode",
@@ -344,27 +344,27 @@
 					],
 					"description": "directories to ignore, defaults to .vscode, .git, .svn"
 				},
-				"perl.pls.cacheDir": {
+				"perl.p::ls.cacheDir": {
 					"type": "string",
 					"default": "",
 					"description": "directory for caching of parsed symbols, if the directory does not exists, it will be created, defaults to ${workspace}/.vscode/perl-lang. This should be one unqiue directory per project and an absolute path."
 				},
-				"perl.pls.showLocalVars": {
+				"perl.p::ls.showLocalVars": {
 					"type": "boolean",
 					"default": false,
 					"description": "if true, show also local variables in symbol view"
 				},
-				"perl.pls.disableCache": {
+				"perl.p::ls.disableCache": {
 					"type": "boolean",
 					"default": false,
 					"description": "if true, the LanguageServer will not cache the result of parsing source files on disk, so it can be used within readonly directories"
 				},
-				"perl.pls.debugAdapterPort": {
+				"perl.p::ls.debugAdapterPort": {
 					"type": "integer",
 					"default": 13603,
 					"description": "port to use for connection between vscode and debug adapter inside Perl::LanguageServer. On a multi user system every user must use a different port."
 				},
-				"perl.pls.debugAdapterPortRange": {
+				"perl.p::ls.debugAdapterPortRange": {
 					"type": "integer",
 					"default": 100,
 					"description": "if debugAdapterPort is in use try ports from debugAdapterPort to debugAdapterPort + debugAdapterPortRange. Default 100."

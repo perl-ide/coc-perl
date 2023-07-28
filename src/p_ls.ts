@@ -15,12 +15,20 @@
  * ignore/remove them at runtime, but keep the code similar to the original
  * extension prevent us, maintainer, from pulling my hear some times.
  *
+ * Language Server:
+ *
+ * Although this file is called p_ls.ts, it refers to Perl::LanguageServer
+ * project, and not PLS project itself. The names are confusing and the
+ * underscore was used as `::` to prevent further confusion. However, for
+ * the sake of simplicity, in the code the PLS was used to refer to
+ * Perl::LanguageServer. In case, one day, coc-perl supports the PLS
+ * project, the names must change. To prevent issues in the future though,
+ * the configuration options for this server are under `perl.p::ls` object.
+ *
  * Bruno Meneguele <bmeneg@heredoc.io> 2023
  */
 
 'use strict';
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
 import * as net from 'net';
 import {
   window,
@@ -32,9 +40,9 @@ import {
 } from 'coc.nvim';
 
 /* The IPLSConfig interface doesn't contain all configuration options
- * because just some of them are necessary for Perl interpreter before the
- * actual langague server startup. The remainer of the options are kept
- * and used by coc.nvim through the package.json file */
+ * because only some of them are necessary for Perl interpreter before the
+ * actual langague server startup. The remainer of the options are kept and
+ * used by coc.nvim through the package.json file. */
 export interface IPLSConfig {
   enable: boolean;
 
@@ -269,13 +277,13 @@ export async function getPLSClient(
     revealOutputChannelOn: RevealOutputChannelOn.Never,
     synchronize: {
       // Synchronize the setting section 'perl_lang' to the server
-      configurationSection: 'perl',
+      configurationSection: 'perl.p::ls',
     },
   };
 
   // Create the language client and start the client.
   return new LanguageClient(
-    'perl',
+    'Perl::LanguageServer',
     'Perl Language Server',
     serverOptions,
     clientOptions
