@@ -1,20 +1,13 @@
-import { IPLSConfig, getPLSClient } from './p_ls';
-import { INavigatorConfig, getNavigatorClient } from './navigator';
-import { workspace, ExtensionContext, LanguageClient } from 'coc.nvim';
+import { ExtensionContext, LanguageClient } from 'coc.nvim';
 
-interface IPerlConfig {
-  navigator: INavigatorConfig;
-  pls: IPLSConfig;
-}
+import { getConfig } from './config';
+import { getPLSClient } from './p_ls';
+import { getNavigatorClient } from './navigator';
 
 export async function activate(context: ExtensionContext) {
   let client: LanguageClient;
-  const config: IPerlConfig = {
-    navigator: workspace
-      .getConfiguration()
-      .get('perl.navigator') as INavigatorConfig,
-    pls: workspace.getConfiguration().get('perl.p::ls') as IPLSConfig,
-  };
+  const config = getConfig();
+  console.log(config);
 
   if (config.pls.enable === true && config.navigator.enable === true) {
     console.error('coc-perl activated, but more than one server enabled');

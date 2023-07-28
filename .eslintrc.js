@@ -7,7 +7,6 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
   ],
   globals: {
@@ -19,9 +18,15 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint'],
   rules: {
-    'no-unused-vars': 'warn',
+    "no-unused-vars": [
+      "warn",
+      {
+          "ignoreRestSiblings": true,
+          "destructuredArrayIgnorePattern": "[_]",
+          "caughtErrors": "none"
+      }
+    ]
   },
   overrides: [
     {

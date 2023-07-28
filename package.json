@@ -34,6 +34,190 @@
 			"type": "object",
 			"title": "Perl configuration",
 			"properties": {
+				"perlnavigator.enable": {
+					"type": "boolean",
+					"default": false,
+					"description": "Enable Perl Navigator server."
+				},
+				"perlnavigator.serverPath": {
+					"type": "string",
+					"default": "",
+					"description": "Full path to the server JavaScript file (no aliases, .bat files or ~/)."
+				},
+				"perlnavigator.perlPath": {
+					"scope": "resource",
+					"type": "string",
+					"default": "perl",
+					"description": "Full path to the perl executable (no aliases, .bat files or ~/)."
+				},
+				"perlnavigator.perlParams": {
+					"scope": "resource",
+					"type": "array",
+					"default": [],
+					"description": "Pass miscellaneous command line arguments to pass to the perl executable."
+				},
+				"perlnavigator.enableWarnings": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Enable warnings using -Mwarnings command switch."
+				},
+				"perlnavigator.perlimportsLintEnabled": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "Enable perlimports as a linter."
+				},
+				"perlnavigator.perlimportsTidyEnabled": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "Enable perlimports as a tidier."
+				},
+				"perlnavigator.perlimportsProfile": {
+					"scope": "resource",
+					"type": "string",
+					"default": "",
+					"description": "Path to perlimports.toml (no aliases, .bat files or ~/)."
+				},
+				"perlnavigator.perltidyProfile": {
+					"scope": "resource",
+					"type": "string",
+					"default": "",
+					"description": "Path to perl tidy profile (no aliases, .bat files or ~/)."
+				},
+				"perlnavigator.perltidyEnabled": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Enable perl tidy."
+				},
+				"perlnavigator.perlcriticProfile": {
+					"scope": "resource",
+					"type": "string",
+					"default": "",
+					"description": "Path to perl critic profile. Otherwise perlcritic itself will default to ~/.perlcriticrc. (no aliases, .bat files or ~/)."
+				},
+				"perlnavigator.perlcriticEnabled": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Enable perl critic."
+				},
+				"perlnavigator.perlcriticSeverity": {
+					"scope": "resource",
+					"type": "number",
+					"description": "Override severity level for perl critic (normally in profile)."
+				},
+				"perlnavigator.perlcriticTheme": {
+					"scope": "resource",
+					"type": "string",
+					"description": "Override theme for perl critic (normally in profile)."
+				},
+				"perlnavigator.perlcriticExclude": {
+					"scope": "resource",
+					"type": "string",
+					"description": "Regex pattern with policies to exclude for perl critic (normally in profile)."
+				},
+				"perlnavigator.perlcriticInclude": {
+					"scope": "resource",
+					"type": "string",
+					"description": "Regex pattern with policies to include for perl critic (normally in profile)."
+				},
+				"perlnavigator.severity5": {
+					"scope": "resource",
+					"type": "string",
+					"enum": [
+						"error",
+						"warning",
+						"info",
+						"hint",
+						"none"
+					],
+					"default": "warning",
+					"description": "Editor Diagnostic severity level for Critic severity 5."
+				},
+				"perlnavigator.severity4": {
+					"scope": "resource",
+					"type": "string",
+					"enum": [
+						"error",
+						"warning",
+						"info",
+						"hint",
+						"none"
+					],
+					"default": "info",
+					"description": "Editor Diagnostic severity level for Critic severity 4."
+				},
+				"perlnavigator.severity3": {
+					"scope": "resource",
+					"type": "string",
+					"enum": [
+						"error",
+						"warning",
+						"info",
+						"hint",
+						"none"
+					],
+					"default": "hint",
+					"description": "Editor Diagnostic severity level for Critic severity 3."
+				},
+				"perlnavigator.severity2": {
+					"scope": "resource",
+					"type": "string",
+					"enum": [
+						"error",
+						"warning",
+						"info",
+						"hint",
+						"none"
+					],
+					"default": "hint",
+					"description": "Editor Diagnostic severity level for Critic severity 2."
+				},
+				"perlnavigator.severity1": {
+					"scope": "resource",
+					"type": "string",
+					"enum": [
+						"error",
+						"warning",
+						"info",
+						"hint",
+						"none"
+					],
+					"default": "hint",
+					"description": "Editor Diagnostic severity level for Critic severity 1."
+				},
+				"perlnavigator.includePaths": {
+					"scope": "resource",
+					"type": "array",
+					"default": [],
+					"description": "Array of paths added to @INC. You can use $workspaceFolder as a placeholder."
+				},
+				"perlnavigator.includeLib": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Boolean to indicate if $project/lib should be added to the path by default."
+				},
+				"perlnavigator.logging": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Log to stdout from the navigator. Viewable in the Perl Navigator LSP log."
+				},
+				"perlnavigator.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "messages",
+					"description": "Traces the communication between VS Code and the language server."
+				},
 				"perl.navigator.enable": {
 					"type": "boolean",
 					"default": false,
@@ -217,6 +401,157 @@
 					],
 					"default": "messages",
 					"description": "Traces the communication between VS Code and the language server."
+				},
+				"perl.enable": {
+					"type": "boolean",
+					"default": false,
+					"description": "Enable Perl::LanguageServer server."
+				},
+				"perl.logLevel": {
+					"type": "integer",
+					"default": 0,
+					"description": "Log level 0-2"
+				},
+				"perl.logFile": {
+					"type": "string",
+					"default": "",
+					"description": "If set, log output is written to the given logfile, instead of displaying it in the vscode output pane. Log output is always appended so you are responsible for rotating the file."
+				},
+				"perl.sshAddr": {
+					"type": "string",
+					"default": "",
+					"description": "ip address of remote system"
+				},
+				"perl.sshPort": {
+					"type": "string",
+					"default": 0,
+					"description": "optional, port for ssh to remote system"
+				},
+				"perl.sshUser": {
+					"type": "string",
+					"default": "",
+					"description": "user for ssh login"
+				},
+				"perl.sshCmd": {
+					"type": "string",
+					"default": "ssh",
+					"description": "defaults to ssh on unix and plink on windows"
+				},
+				"perl.sshWorkspaceRoot": {
+					"type": "string",
+					"default": "",
+					"description": "path of the workspace root on remote system"
+				},
+				"perl.perlCmd": {
+					"type": "string",
+					"default": "perl",
+					"description": "Perl interpreter binary"
+				},
+				"perl.perlArgs": {
+					"type": "array",
+					"default": [],
+					"description": "Perl interpreter arguments"
+				},
+				"perl.sshArgs": {
+					"type": "array",
+					"default": [],
+					"description": "optional arguments for ssh"
+				},
+				"perl.containerCmd": {
+					"type": "string",
+					"default": "",
+					"description": "If set Perl::LanguageServer can run inside a container. Options are: 'docker', 'docker-compose', 'kubectl'",
+					"enum": [
+						"docker",
+						"docker-compose",
+						"kubectl"
+					]
+				},
+				"perl.containerArgs": {
+					"type": "array",
+					"default": [],
+					"description": "arguments for containerCmd. Varies depending on containerCmd."
+				},
+				"perl.containerMode": {
+					"type": "string",
+					"default": "exec",
+					"description": "To start a new container, set to 'run', to execute inside an existing container set to 'exec'. Note: kubectl only supports 'exec'",
+					"enum": [
+						"exec",
+						"run"
+					]
+				},
+				"perl.containerName": {
+					"type": "string",
+					"default": "",
+					"description": "Image to start or container to exec inside or pod to use"
+				},
+				"perl.env": {
+					"type": "object",
+					"default": {},
+					"description": "object with environment settings for command that starts the LanguageServer, e.g. can be used to set KUBECONFIG.",
+					"patternProperties": {
+						"^.+$": {
+							"type": "string"
+						}
+					}
+				},
+				"perl.disablePassEnv": {
+					"type": "boolean",
+					"description": "enviroment from vscode will be passed to debuggee, syntax check and perltidy. If set to true, no enviroment variables will be passed.",
+					"default": false
+				},
+				"perl.pathMap": {
+					"type": "array",
+					"default": [],
+					"description": "mapping of local to remote paths"
+				},
+				"perl.perlInc": {
+					"type": "array",
+					"default": [],
+					"description": "array with paths to add to perl library path. This setting is used by the syntax checker and for the debuggee and also for the LanguageServer itself. perlInc should be absolute paths."
+				},
+				"perl.fileFilter": {
+					"type": "array",
+					"default": [
+						".pl",
+						".pm"
+					],
+					"description": "array for filtering perl file, defaults to *.pm|*.pl"
+				},
+				"perl.ignoreDirs": {
+					"type": "array",
+					"default": [
+						".vscode",
+						".git",
+						".svn"
+					],
+					"description": "directories to ignore, defaults to .vscode, .git, .svn"
+				},
+				"perl.cacheDir": {
+					"type": "string",
+					"default": "",
+					"description": "directory for caching of parsed symbols, if the directory does not exists, it will be created, defaults to ${workspace}/.vscode/perl-lang. This should be one unqiue directory per project and an absolute path."
+				},
+				"perl.showLocalVars": {
+					"type": "boolean",
+					"default": false,
+					"description": "if true, show also local variables in symbol view"
+				},
+				"perl.disableCache": {
+					"type": "boolean",
+					"default": false,
+					"description": "if true, the LanguageServer will not cache the result of parsing source files on disk, so it can be used within readonly directories"
+				},
+				"perl.debugAdapterPort": {
+					"type": "integer",
+					"default": 13603,
+					"description": "port to use for connection between vscode and debug adapter inside Perl::LanguageServer. On a multi user system every user must use a different port."
+				},
+				"perl.debugAdapterPortRange": {
+					"type": "integer",
+					"default": 100,
+					"description": "if debugAdapterPort is in use try ports from debugAdapterPort to debugAdapterPort + debugAdapterPortRange. Default 100."
 				},
 				"perl.p::ls.enable": {
 					"type": "boolean",
