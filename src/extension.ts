@@ -5,7 +5,7 @@ import { getPLSClient } from './p_ls';
 import { getNavigatorClient } from './navigator';
 import { installNavigator, installPLS } from './installer';
 
-const PLSVersion = '2.6.0';
+const PLSVersion = '2.6.1';
 const NavigatorVersion = '0.6.0';
 
 export async function activate(context: ExtensionContext) {
