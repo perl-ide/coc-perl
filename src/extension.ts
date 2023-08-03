@@ -5,6 +5,9 @@ import { getPLSClient } from './p_ls';
 import { getNavigatorClient } from './navigator';
 import { installNavigator, installPLS } from './installer';
 
+const PLSVersion = '2.6.0';
+const NavigatorVersion = '0.6.0';
+
 export async function activate(context: ExtensionContext) {
   let client: LanguageClient;
   const config = getConfig();
@@ -18,16 +21,17 @@ export async function activate(context: ExtensionContext) {
   } else if (config.navigator.enable === true) {
     const [installed, newConfig] = await installNavigator(
       context,
-      config.navigator
+      config.navigator,
+      NavigatorVersion
     );
     if (!installed) return;
     config.navigator = newConfig;
     client = getNavigatorClient(config.navigator);
     console.log('server Perl Navigator enabled');
   } else {
-    const installed = await installPLS(config.pls);
+    const installed = await installPLS(config.pls, PLSVersion);
     if (!installed) return;
-    client = await getPLSClient(config.pls);
+    client = await getPLSClient(config.pls, PLSVersion);
     console.log('server Perl::LanguageServer enabled');
   }
 

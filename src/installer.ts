@@ -97,7 +97,10 @@ async function isPLSInstalled(config: IPLSConfig): Promise<InstallInfo> {
   return info;
 }
 
-export async function installPLS(config: IPLSConfig): Promise<boolean> {
+export async function installPLS(
+  config: IPLSConfig,
+  version: string
+): Promise<boolean> {
   const info = await isPLSInstalled(config);
   if (info.installed) return true;
 
@@ -113,7 +116,9 @@ export async function installPLS(config: IPLSConfig): Promise<boolean> {
         return;
       }
 
-      const result = await runCommand(`cpan ${name}`);
+      const result = await runCommand(
+        `cpan GRICHTER/Perl-LanguageServer-${version}`
+      );
       if (result.err) {
         console.error(result.err.message);
         window.showErrorMessage(`failed to install '${name}'`);
@@ -132,7 +137,8 @@ export async function installPLS(config: IPLSConfig): Promise<boolean> {
 
 export async function installNavigator(
   context: ExtensionContext,
-  config: INavigatorConfig
+  config: INavigatorConfig,
+  version: string
 ): Promise<[boolean, INavigatorConfig]> {
   const info = isNavigatorInstalled(context, config);
   if (info.installed) {
@@ -166,12 +172,21 @@ export async function installNavigator(
       }
       cwd = path.join(cwd, name);
       git = gitSetup(cwd);
+
       const tagRef = await git.raw('rev-list', '--tags', '--max-count=1');
       const latestTag = await git.raw('describe', '--tags', tagRef);
+      version = 'v' + version;
+      let tag = latestTag;
+      if (latestTag !== version) {
+        console.warn(`latest '${name}' version is not supported yet`);
+        console.warn(`changing '${name}' to version ${version}`);
+        tag = version;
+      }
       try {
-        await git.checkout(latestTag);
+        await git.checkout(tag);
       } catch (e) {
         console.error('failed to get latest version:', (e as Error).message);
+        window.showErrorMessage(`failed to install '${name}'`);
         return;
       }
 
