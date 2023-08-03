@@ -16,8 +16,12 @@ export async function activate(context: ExtensionContext) {
     console.error('coc-perl activated, but no server enabled');
     return;
   } else if (config.navigator.enable === true) {
-    const installed = await installNavigator(config.navigator);
+    const [installed, newConfig] = await installNavigator(
+      context,
+      config.navigator
+    );
     if (!installed) return;
+    config.navigator = newConfig;
     client = getNavigatorClient(config.navigator);
     console.log('server Perl Navigator enabled');
   } else {

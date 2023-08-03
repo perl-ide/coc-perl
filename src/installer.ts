@@ -1,7 +1,10 @@
+import fs from 'fs';
+import path from 'path';
 import util from 'util';
 import which from 'which';
 import { ExecOptions, exec } from 'child_process';
-import { window, workspace } from 'coc.nvim';
+import { ExtensionContext, window, workspace } from 'coc.nvim';
+import { SimpleGit, SimpleGitOptions, simpleGit } from 'simple-git';
 
 import { INavigatorConfig } from './navigator';
 import { IPLSConfig } from './p_ls';
@@ -15,9 +18,25 @@ type CmdResult = {
   stdout?: string;
 };
 
-async function runCommand(cmd: string): Promise<CmdResult> {
+type InstallInfo = {
+  installed: boolean;
+  installPath?: string;
+};
+
+function gitSetup(cwd: string): SimpleGit {
+  const opts: SimpleGitOptions = {
+    baseDir: cwd,
+    maxConcurrentProcesses: 6,
+    trimmed: true,
+    binary: 'git',
+    config: [],
+  };
+  return simpleGit(opts);
+}
+
+async function runCommand(cmd: string, cwd?: string): Promise<CmdResult> {
   const opts: ExecOptions = {
-    cwd: workspace.cwd,
+    cwd: cwd || workspace.cwd,
     env: process.env,
     shell: process.platform === 'win32' ? undefined : process.env.SHELL,
   };
@@ -33,28 +52,54 @@ async function runCommand(cmd: string): Promise<CmdResult> {
   return result;
 }
 
-function isNavigatorInstalled(config: INavigatorConfig): boolean {
-  return config.serverPath.length !== 0;
+function isNavigatorInstalled(
+  context: ExtensionContext,
+  config: INavigatorConfig
+): InstallInfo {
+  const info: InstallInfo = { installed: false };
+
+  if (config.serverPath.length !== 0) {
+    info.installed = true;
+    return info;
+  }
+
+  const extPath = path.join(
+    context.storagePath,
+    'PerlNavigator',
+    'server',
+    'out'
+  );
+  // Check if the PerlNavigator was already cloned and installed
+  if (fs.existsSync(extPath)) {
+    info.installed = true;
+    info.installPath = extPath;
+    return info;
+  }
+
+  return info;
 }
 
-async function isPLSInstalled(config: IPLSConfig): Promise<boolean> {
+async function isPLSInstalled(config: IPLSConfig): Promise<InstallInfo> {
   let cmd = `perl -MPerl::LanguageServer -e 1`;
   if (config.perlInc.length > 0) {
     cmd = `perl -I${config.perlInc} -MPerl::LanguageServer -e 1`;
   }
 
+  const info: InstallInfo = { installed: false };
   const result = await runCommand(cmd);
   if (result.err && result.err.message.includes("Can't locate")) {
-    return false;
+    return info;
   } else if (result.err) {
     console.error(result.err.message);
-    return false;
+    return info;
   }
-  return true;
+  info.installed = true;
+  return info;
 }
 
 export async function installPLS(config: IPLSConfig): Promise<boolean> {
-  if (await isPLSInstalled(config)) return true;
+  const info = await isPLSInstalled(config);
+  if (info.installed) return true;
 
   const name = 'Perl::LanguageServer';
   let installed = false;
@@ -78,15 +123,84 @@ export async function installPLS(config: IPLSConfig): Promise<boolean> {
       installed = true;
     });
   } catch (e) {
+    console.error((e as Error).message);
     window.showErrorMessage((e as Error).message);
   }
+
   return installed;
 }
 
 export async function installNavigator(
+  context: ExtensionContext,
   config: INavigatorConfig
-): Promise<boolean> {
-  if (isNavigatorInstalled(config)) return true;
+): Promise<[boolean, INavigatorConfig]> {
+  const info = isNavigatorInstalled(context, config);
+  if (info.installed) {
+    config.serverPath = info.installPath
+      ? path.join(info.installPath, '/server.js')
+      : config.serverPath;
+    return [true, config];
+  }
 
-  return true;
+  const name = 'PerlNavigator';
+  let installed = false;
+  try {
+    await withStatusBar(`Installing '${name}'...`, async () => {
+      let cwd = context.storagePath;
+      let isCloned = false;
+      if (!fs.existsSync(cwd)) {
+        fs.mkdirSync(cwd);
+      } else {
+        // Prevent running a clone if repo was alread cloned
+        if (fs.existsSync(path.join(cwd, 'PerlNavigator'))) isCloned = true;
+      }
+
+      let git = gitSetup(cwd);
+      if (!isCloned) {
+        try {
+          await git.clone('https://github.com/bscan/PerlNavigator.git');
+        } catch (e) {
+          console.error('failed to download source:', (e as Error).message);
+          return;
+        }
+      }
+      cwd = path.join(cwd, name);
+      git = gitSetup(cwd);
+      const tagRef = await git.raw('rev-list', '--tags', '--max-count=1');
+      const latestTag = await git.raw('describe', '--tags', tagRef);
+      try {
+        await git.checkout(latestTag);
+      } catch (e) {
+        console.error('failed to get latest version:', (e as Error).message);
+        return;
+      }
+
+      let result = await runCommand('npm ci', cwd);
+      if (result.err) {
+        console.error(result.err.message);
+        console.error(result.stderr);
+        window.showErrorMessage(`failed to install '${name}'`);
+        return;
+      }
+
+      cwd = path.join(cwd, 'server');
+      result = await runCommand('npm exec tsc', cwd);
+      if (result.err) {
+        console.error(result.err.message);
+        console.error(result.stderr);
+        window.showErrorMessage(`failed to install '${name}'`);
+        return;
+      }
+      window.showInformationMessage(`'${name}' installed`);
+
+      // Update server path based on the clonned repo.
+      config.serverPath = path.join(cwd, 'out', 'server.js');
+      installed = true;
+    });
+  } catch (e) {
+    console.error((e as Error).message);
+    window.showErrorMessage((e as Error).message);
+  }
+
+  return [installed, config];
 }
