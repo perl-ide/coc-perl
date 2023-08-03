@@ -2,7 +2,7 @@
 	"name": "coc-perl",
 	"displayName": "Perl",
 	"description": "Client extension for Perl language server through coc.nvim",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"author": "bmeneg@heredoc.io",
 	"homepage": "https://github.com/bmeneg/coc-perl",
 	"publisher": "Bruno Meneguele <bmeneg@heredoc.io>",
@@ -21,7 +21,8 @@
 		"perl navigator"
 	],
 	"engines": {
-		"coc": "^0.0.82"
+		"coc": "^0.0.82",
+		"node": ">=16"
 	},
 	"activationEvents": [
 		"onLanguage:perl"
@@ -781,7 +782,8 @@
 		"@babel/plugin-proposal-class-properties": "^7.16.0",
 		"@babel/preset-env": "^7.16.4",
 		"@babel/preset-typescript": "^7.16.0",
-		"@types/node": "^16.11.10",
+		"@types/node": ">=16",
+		"@types/which": "^2.0.2",
 		"@typescript-eslint/eslint-plugin": "^5.4.0",
 		"@typescript-eslint/parser": "^5.4.0",
 		"babel-loader": "^8.2.3",
@@ -794,7 +796,7 @@
 		"rimraf": "^3.0.2",
 		"typescript": "^4.5.2",
 		"webpack": "^5.64.4",
-		"webpack-cli": "^4.9.1"
+		"webpack-cli": "^5.1.4"
 	},
 	"scripts": {
 		"build": "webpack",
@@ -805,6 +807,7 @@
 	"dependencies": {
 		"core-js": "^3.19.1",
 		"eslint-webpack-plugin": "^3.1.1",
-		"regenerator-runtime": "^0.13.9"
+		"simple-git": "^3.19.1",
+		"which": "^3.0.0"
 	}
 }

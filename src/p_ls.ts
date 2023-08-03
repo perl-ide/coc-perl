@@ -161,9 +161,9 @@ function buildContainerArgs(
 }
 
 export async function getPLSClient(
-  config: IPLSConfig
+  config: IPLSConfig,
+  version: string
 ): Promise<LanguageClient> {
-  const lsVersion = '2.6.0';
   const resource = window.activeTextEditor?.document.uri;
   const perlIncOpt = config.perlInc.map((incDir: string): string => {
     return '-I' + resolveWorkspaceFolder(incDir, resource);
@@ -181,7 +181,7 @@ export async function getPLSClient(
     '--log-file',
     config.logFile,
     '--version',
-    lsVersion,
+    version,
   ];
 
   // DAP-SUPPORT

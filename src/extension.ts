@@ -3,11 +3,14 @@ import { ExtensionContext, LanguageClient } from 'coc.nvim';
 import { getConfig } from './config';
 import { getPLSClient } from './p_ls';
 import { getNavigatorClient } from './navigator';
+import { installNavigator, installPLS } from './installer';
+
+const PLSVersion = '2.6.1';
+const NavigatorVersion = '0.6.0';
 
 export async function activate(context: ExtensionContext) {
   let client: LanguageClient;
   const config = getConfig();
-  console.log(config);
 
   if (config.pls.enable === true && config.navigator.enable === true) {
     console.error('coc-perl activated, but more than one server enabled');
@@ -16,10 +19,19 @@ export async function activate(context: ExtensionContext) {
     console.error('coc-perl activated, but no server enabled');
     return;
   } else if (config.navigator.enable === true) {
+    const [installed, newConfig] = await installNavigator(
+      context,
+      config.navigator,
+      NavigatorVersion
+    );
+    if (!installed) return;
+    config.navigator = newConfig;
     client = getNavigatorClient(config.navigator);
     console.log('server Perl Navigator enabled');
   } else {
-    client = await getPLSClient(config.pls);
+    const installed = await installPLS(config.pls, PLSVersion);
+    if (!installed) return;
+    client = await getPLSClient(config.pls, PLSVersion);
     console.log('server Perl::LanguageServer enabled');
   }
 

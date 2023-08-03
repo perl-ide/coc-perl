@@ -16,21 +16,23 @@ CoC configuration file.
 
 ## Installation
 
-In the current version of coc-perl, both supported language servers must be installed externally as pre-requisites
-before enabling them in CoC.
+In the current version of coc-perl, both supported language servers are automatically installed in case you don't have
+it already, meaning you only need to define which server you want to enable in CoC configuration.
 
 ### Prerequisites
 
-For Perl::LanguageServer you need to install the server through CPAN, `cpan Perl::LanguageServer`, on your target
-system or in your local library path in case you're using [PerlBrew](https://github.com/gugod/App-perlbrew).
+For Perl::LanguageServer you need to have `cpan` installed in your host system. The way coc-perl installs it
+automatically calls `cpan Perl::LanguageServer` defining a specific version (the latest supported version). However,
+you can manually install it on your system or your local library path in case you're using
+[PerlBrew](https://github.com/gugod/App-perlbrew), preventing any installation done by coc-perl.
 
-Now, for PerlNavigator, the installation process is slightly different, since it's not present in CPAN and its
-initialization is entirely written in TypeScript rather than Perl. With that, to install it you need to follow what's
-described on (PerlNavigator
-repository)[https://github.com/bscan/PerlNavigator/tree/main#installation-for-other-editors] about installing it on
+Now, for PerlNavigator, coc-perl also handles it automatically, but it requires `git` to be installed. In case you
+decide to install it manually, since it's not present in CPAN and its initialization is entirely written in TypeScript
+rather than Perl, you need to follow what's described on [PerlNavigator
+repository](https://github.com/bscan/PerlNavigator/tree/main#installation-for-other-editors) about installing it on
 other editors. In summary, you need to clone the repository, install the server running the `npx tsc` command from
 within server's folder and take note of the absolute path for the generated code, for instance
-`/home/<user>/PerlNavigator/server/out/server.js`, which will be needed when configuring CoC.
+`/home/<user>/PerlNavigator/server/out/server.js`, which will be needed when configuring CoC later on.
 
 ### Installing coc-perl
 
@@ -55,8 +57,8 @@ Plug 'bmeneg/coc-perl'
 
 ## Choosing a Language Server
 
-To enable a language server an options must be added to the `coc-settings.json` file, which can be accessed through
-the (neo)vim command `:CocConfig`. However, before directly enabling them, it's important to understand how the
+To enable a language server an option must be added to the `coc-settings.json` file, which can be accessed through the
+(neo)vim command `:CocConfig`. However, before directly enabling them, it's important to understand how the
 configuration properties are defined for each server.
 
 ### Configuration properties
