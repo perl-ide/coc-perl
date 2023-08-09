@@ -276,8 +276,8 @@ export async function getPLSClient(
     documentSelector: [{ scheme: 'file', language: 'perl' }],
     revealOutputChannelOn: RevealOutputChannelOn.Never,
     synchronize: {
-      // Synchronize the setting section 'perl_lang' to the server
-      configurationSection: 'perl.p::ls',
+      // Synchronize the settings to the server
+      configurationSection: ['perl', 'perl.p::ls'],
     },
   };
 

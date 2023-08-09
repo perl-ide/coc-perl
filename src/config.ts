@@ -36,27 +36,37 @@ export interface IPerlConfig {
  * format; and place them in the standard IPerlConfig interface.
  * Options using coc-perl format will have precedence over others. */
 export function getConfig(): IPerlConfig {
-  const compatNavConfig = workspace
-    .getConfiguration()
-    .get('perlnavigator') as INavigatorConfig;
-  const newNavConfig = workspace
-    .getConfiguration()
-    .get('perl.navigator') as INavigatorConfig;
-  // Spread both in the same object, overriding compat options.
-  const navConfig = { ...compatNavConfig, ...newNavConfig };
+  const currNavConfig = workspace.getConfiguration('perlnavigator');
+  Object.entries(currNavConfig).forEach(([k, _]) => {
+    const obj = workspace.getConfiguration().inspect(`perl.navigator.${k}`);
+    if (obj?.workspaceValue !== undefined) {
+      currNavConfig.update(k, obj.workspaceValue);
+    } else if (obj?.globalValue !== undefined) {
+      currNavConfig.update(k, obj.globalValue);
+    }
+  });
+  const navConfig: INavigatorConfig = {
+    enable: currNavConfig.get('enable') as boolean,
+    serverPath: currNavConfig.get('serverPath') as string,
+  };
 
   // Retrieve 'perl.*' and ignore unwanted options.
   // See more on comment for ICompatPLSConfig.
+  const currPLSConfig = workspace.getConfiguration('perl');
+  Object.entries(currPLSConfig).forEach(([k, _]) => {
+    const obj = workspace.getConfiguration().inspect(`perl.p::ls.${k}`);
+    if (obj?.workspaceValue !== undefined) {
+      currPLSConfig.update(k, obj.workspaceValue);
+    } else if (obj?.globalValue !== undefined) {
+      currPLSConfig.update(k, obj.globalValue);
+    }
+  });
+
   const {
     navigator: _,
     'p::ls': __,
-    ...compatPLSConfig
-  } = workspace.getConfiguration().get('perl') as ICompatPLSConfig;
-
-  const newPLSConfig = workspace
-    .getConfiguration()
-    .get('perl.p::ls') as IPLSConfig;
-  const plsConfig = { ...compatPLSConfig, ...newPLSConfig };
+    ...plsConfig
+  } = currPLSConfig as unknown as ICompatPLSConfig;
 
   const config: IPerlConfig = {
     navigator: navConfig,
