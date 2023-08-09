@@ -52,7 +52,7 @@ export function getNavigatorClient(config: INavigatorConfig): LanguageClient {
       { scheme: 'untitled', language: 'perl' },
     ],
     synchronize: {
-      configurationSection: 'perl.navigator',
+      configurationSection: ['perlnavigator', 'perl.navigator'],
     },
   };
 
