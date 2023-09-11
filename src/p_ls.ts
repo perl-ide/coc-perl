@@ -277,7 +277,7 @@ export async function getPLSClient(
     revealOutputChannelOn: RevealOutputChannelOn.Never,
     synchronize: {
       // Synchronize the settings to the server
-      configurationSection: ['perl', 'perl.p::ls'],
+      configurationSection: ['perl.p::ls'],
     },
   };
 

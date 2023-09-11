@@ -10,7 +10,7 @@
  * Bruno Meneguele <bmeneg@heredoc.io>
  */
 
-import { workspace } from 'coc.nvim';
+import { workspace, WorkspaceConfiguration } from 'coc.nvim';
 
 import { IPLSConfig } from './p_ls';
 import { INavigatorConfig } from './navigator';
@@ -33,40 +33,88 @@ export interface IPerlConfig {
 }
 
 /* Handle mixed configuration: original (compat) VSCode options and coc-perl
- * format; and place them in the standard IPerlConfig interface.
- * Options using coc-perl format will have precedence over others. */
+ * format; and place them in the standard IPerlConfig interface by merging the
+ * values into a single namespace[1]. Options using coc-perl format have
+ * precedence over the original format.
+ *
+ * [1] by "namespace" I mean eg. `perlnavigator` vs `perl.navigator`, where
+ * each is a different namespace. */
 export function getConfig(): IPerlConfig {
-  const currNavConfig = workspace.getConfiguration('perlnavigator');
-  Object.entries(currNavConfig).forEach(([k, _]) => {
-    const obj = workspace.getConfiguration().inspect(`perl.navigator.${k}`);
-    if (obj?.workspaceValue !== undefined) {
-      currNavConfig.update(k, obj.workspaceValue);
-    } else if (obj?.globalValue !== undefined) {
-      currNavConfig.update(k, obj.globalValue);
-    }
-  });
+  // To avoid multiple reruns, use bitwise 'or' in a number flag to notify an
+  // update occured in the middle of the forEach() iteration.
+  let didConfigChange: number;
+  let origConfig: WorkspaceConfiguration;
+
+  let cocNavConfig: WorkspaceConfiguration;
+  do {
+    didConfigChange = 0;
+    origConfig = workspace.getConfiguration('perlnavigator');
+    cocNavConfig = workspace.getConfiguration('perl.navigator');
+    Object.entries(cocNavConfig).forEach(([k, v]) => {
+      const origOpt = origConfig.inspect(k);
+      const cocOpt = cocNavConfig.inspect(k);
+      let value;
+      if (
+        // Only change that values that ware actually manually set and are
+        // different on each namespace.
+        origOpt?.workspaceValue !== undefined &&
+        origOpt?.workspaceValue !== cocOpt?.workspaceValue
+      ) {
+        value =
+          cocOpt?.workspaceValue === undefined ? origOpt?.workspaceValue : v;
+        cocNavConfig.update(k, value);
+        didConfigChange |= 1;
+      } else if (
+        origOpt?.globalValue !== undefined &&
+        origOpt?.globalValue !== cocOpt?.globalValue
+      ) {
+        value = cocOpt?.globalValue === undefined ? origOpt?.globalValue : v;
+        cocNavConfig.update(k, value, true);
+        didConfigChange |= 1;
+      }
+    });
+  } while (didConfigChange);
+
   const navConfig: INavigatorConfig = {
-    enable: currNavConfig.get('enable') as boolean,
-    serverPath: currNavConfig.get('serverPath') as string,
+    enable: cocNavConfig.get('enable') as boolean,
+    serverPath: cocNavConfig.get('serverPath') as string,
   };
 
   // Retrieve 'perl.*' and ignore unwanted options.
   // See more on comment for ICompatPLSConfig.
-  const currPLSConfig = workspace.getConfiguration('perl');
-  Object.entries(currPLSConfig).forEach(([k, _]) => {
-    const obj = workspace.getConfiguration().inspect(`perl.p::ls.${k}`);
-    if (obj?.workspaceValue !== undefined) {
-      currPLSConfig.update(k, obj.workspaceValue);
-    } else if (obj?.globalValue !== undefined) {
-      currPLSConfig.update(k, obj.globalValue);
-    }
-  });
+  let cocPLSConfig: WorkspaceConfiguration;
+  do {
+    didConfigChange = 0;
+    origConfig = workspace.getConfiguration('perl');
+    cocPLSConfig = workspace.getConfiguration('perl.p::ls');
+    Object.entries(cocPLSConfig).forEach(([k, v]) => {
+      const origOpt = origConfig.inspect(k);
+      const cocOpt = cocPLSConfig.inspect(k);
+      let value;
+      if (
+        origOpt?.workspaceValue !== undefined &&
+        origOpt?.workspaceValue !== cocOpt?.workspaceValue
+      ) {
+        value =
+          cocOpt?.workspaceValue === undefined ? origOpt?.workspaceValue : v;
+        cocPLSConfig.update(k, value);
+        didConfigChange |= 1;
+      } else if (
+        origOpt?.globalValue !== undefined &&
+        origOpt?.globalValue !== cocOpt?.globalValue
+      ) {
+        value = cocOpt?.globalValue === undefined ? origOpt?.globalValue : v;
+        cocPLSConfig.update(k, value, true);
+        didConfigChange |= 1;
+      }
+    });
+  } while (didConfigChange);
 
   const {
     navigator: _,
     'p::ls': __,
     ...plsConfig
-  } = currPLSConfig as unknown as ICompatPLSConfig;
+  } = cocPLSConfig as unknown as ICompatPLSConfig;
 
   const config: IPerlConfig = {
     navigator: navConfig,
