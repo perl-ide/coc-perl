@@ -778,7 +778,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.16.0",
-		"@babel/plugin-transform-class-properties": "^7.16.0",
+		"@babel/plugin-transform-class-properties": "^7.18.6",
 		"@babel/preset-env": "^7.16.4",
 		"@babel/preset-typescript": "^7.16.0",
 		"@types/node": "^12",
