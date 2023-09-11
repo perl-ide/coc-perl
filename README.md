@@ -21,9 +21,9 @@ it already, meaning you only need to define which server you want to enable in C
 
 ### Prerequisites
 
-For Perl::LanguageServer you need to have `cpan` installed in your host system. The way coc-perl installs it
-automatically calls `cpan Perl::LanguageServer` defining a specific version (the latest supported version). However,
-you can manually install it on your system or your local library path in case you're using
+For Perl::LanguageServer you need to have `cpan` installed in your host system. The way coc-perl installs it is by
+executing `cpan Perl::LanguageServer` with a specific version (the latest supported version). However, you can
+manually install it on your system or your local library path in case you're using
 [PerlBrew](https://github.com/gugod/App-perlbrew), preventing any installation done by coc-perl.
 
 Now, for PerlNavigator, coc-perl also handles it automatically, but it requires `git` to be installed. In case you
@@ -37,23 +37,28 @@ within server's folder and take note of the absolute path for the generated code
 ### Installing coc-perl
 
 Inside (neo)vim run this command:
-
 ```vim
 :CocInstall coc-perl
 ```
 or, you can set `g:coc_global_extensions`.
-
 ```vim
 let g:coc_global_extensions = [
       \ 'coc-perl',
 \ ]
 ```
-
 or even install directly via any plugin manager, for example, with [vim-plug](https://github.com/junegunn/vim-plug):
-
 ```vim
 Plug 'bmeneg/coc-perl'
 ```
+
+#### Automatic language server installation
+
+When coc-perl is installed for the first time, you probably won't have any configuration referring to what language
+server you want to enable, thus neither Perl::LanguageServer nor PerlNavigator will be installed. Make sure to after
+installing coc-perl, enable one of the servers in coc.nvim configuration file (keep reading the next sections to know
+how perform such action) and then reopen a Perl file or, in case you're already with a Perl file opened, call
+`:CocRestart`, so the automatic installation process can take place considering the choice you made regarding the
+language server.
 
 ## Choosing a Language Server
 
@@ -89,21 +94,23 @@ For enabling `p::ls`, you can use either options (the first is preferred):
     "perl.enable": true
 }
 ```
-
-`navigator` requires one additional option, the server absolute path:
+And for `navigator`:
 
 ```json
 {
     "perl.navigator.enable": true,
-    "perl.navigator.serverPath": "/home/<user>/PerlNavigator/server/out/server.js"
 }
 ```
 or using the original configuration property (not recommended):
 ```json
 {
     "perlnavigator.enable": true,
-    "perlnavigator.serverPath": "/home/<user>/PerlNavigator/server/out/server.js"
 }
+```
+If you're using a development branch of `navigator`, manually downloaded and/or installed, you'll need one additional
+option: the server absolute path.
+```json
+    "perl.navigator.serverPath": "/home/<user>/PerlNavigator/server/out/server.js"
 ```
 
 ### Other options
@@ -111,7 +118,6 @@ or using the original configuration property (not recommended):
 As user, you can change and pass different options to each language server, however, the options are tied to the
 server version being used. Because of that, make sure to always run the newest version of the server alongside the
 coc-perl extension. A brief example of using different options are as follows:
-
 ```json
 {
     "perl.p::ls.enable": true,
