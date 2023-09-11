@@ -21,8 +21,7 @@
 		"perl navigator"
 	],
 	"engines": {
-		"coc": "^0.0.82",
-		"node": ">=16"
+		"coc": "^0.0.82"
 	},
 	"activationEvents": [
 		"onLanguage:perl"
@@ -779,10 +778,10 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.16.0",
-		"@babel/plugin-proposal-class-properties": "^7.16.0",
+		"@babel/plugin-transform-class-properties": "^7.16.0",
 		"@babel/preset-env": "^7.16.4",
 		"@babel/preset-typescript": "^7.16.0",
-		"@types/node": ">=16",
+		"@types/node": "^12",
 		"@types/which": "^2.0.2",
 		"@typescript-eslint/eslint-plugin": "^5.4.0",
 		"@typescript-eslint/parser": "^5.4.0",
