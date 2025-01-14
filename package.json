@@ -2,7 +2,7 @@
 	"name": "coc-perl",
 	"displayName": "Perl",
 	"description": "Client extension for Perl language server through coc.nvim",
-	"version": "2.1.2",
+	"version": "2.2.0",
 	"author": "bmeneg@heredoc.io",
 	"homepage": "https://github.com/bmeneg/coc-perl",
 	"publisher": "Bruno Meneguele <bmeneg@heredoc.io>",
@@ -59,6 +59,18 @@
 					"type": "array",
 					"default": [],
 					"description": "Pass miscellaneous command line arguments to pass to the perl executable."
+				},
+				"perlnavigator.perlEnv": {
+					"scope": "resource",
+					"type": "object",
+					"default": {},
+					"description": "Pass environment variables to the perl executable. Skipped if undefined."
+				},
+				"perlnavigator.perlEnvAdd": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Add environment variables to current environment, or totally replace."
 				},
 				"perlnavigator.enableWarnings": {
 					"scope": "resource",
@@ -243,6 +255,18 @@
 					"type": "array",
 					"default": [],
 					"description": "Pass miscellaneous command line arguments to pass to the perl executable."
+				},
+				"perl.navigator.perlEnv": {
+					"scope": "resource",
+					"type": "object",
+					"default": {},
+					"description": "Pass environment variables to the perl executable. Skipped if undefined."
+				},
+				"perl.navigator.perlEnvAdd": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Add environment variables to current environment, or totally replace."
 				},
 				"perl.navigator.enableWarnings": {
 					"scope": "resource",
