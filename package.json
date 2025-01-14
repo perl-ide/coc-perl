@@ -777,24 +777,24 @@
 		]
 	},
 	"devDependencies": {
-		"@babel/core": "^7.16.0",
-		"@babel/plugin-transform-class-properties": "^7.18.6",
-		"@babel/preset-env": "^7.16.4",
-		"@babel/preset-typescript": "^7.16.0",
+		"@babel/core": "^7.26.0",
+		"@babel/plugin-transform-class-properties": "^7.25.9",
+		"@babel/preset-env": "^7.26.0",
+		"@babel/preset-typescript": "^7.26.0",
 		"@types/node": "^12",
 		"@types/which": "^2.0.2",
-		"@typescript-eslint/eslint-plugin": "^5.4.0",
-		"@typescript-eslint/parser": "^5.4.0",
-		"babel-loader": "^8.2.3",
+		"@typescript-eslint/eslint-plugin": "^8.20.0",
+		"@typescript-eslint/parser": "^8.20.0",
+		"babel-loader": "^8.4.1",
 		"coc.nvim": "^0.0.82",
-		"eslint": "^8.3.0",
+		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-prettier": "^4.0.0",
 		"fork-ts-checker-webpack-plugin": "^6.4.2",
 		"prettier": "^2.5.0",
 		"rimraf": "^3.0.2",
 		"typescript": "^4.5.2",
-		"webpack": "^5.64.4",
+		"webpack": "^5.97.1",
 		"webpack-cli": "^5.1.4"
 	},
 	"scripts": {
@@ -804,9 +804,10 @@
 		"typecheck": "tsc -w"
 	},
 	"dependencies": {
-		"core-js": "^3.19.1",
-		"eslint-webpack-plugin": "^3.1.1",
-		"simple-git": "^3.19.1",
+		"core-js": "^3.40.0",
+		"eslint-webpack-plugin": "^4.2.0",
+		"micromatch": "^4.0.8",
+		"simple-git": "^3.27.0",
 		"which": "^3.0.0"
 	}
 }
