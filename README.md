@@ -17,14 +17,18 @@ CoC configuration file.
 ## Installation
 
 In the current version of coc-perl, both supported language servers are automatically installed in case you don't have
-it already, meaning you only need to define which server you want to enable in CoC configuration.
+it already, meaning you only need to define which server you want to enable in CoC configuration. However, for
+`Perl::LanguageServer` it depends if you've [local::lib](https://metacpan.org/pod/local::lib) set in your system or
+not: if you have it set manually or through some other installation/dependency management tool, like
+[PerlBrew](https://perlbrew.pl/), [Carton](https://metacpan.org/pod/Carton), [Carmel](https://metacpan.org/pod/Carmel), etc, the automatic installation should happen without any
+problems, since the server will be placed in a local directory, that your user has access to; on the other hand,
+without it set, the installation is required to be manually executed as root, as described by its own [documentation](https://github.com/richterger/Perl-LanguageServer?tab=readme-ov-file#requirements).
 
 ### Prerequisites
 
 For Perl::LanguageServer you need to have `cpan` installed in your host system. The way coc-perl installs it is by
 executing `cpan Perl::LanguageServer` with a specific version (the latest supported version). However, you can
-manually install it on your system or your local library path in case you're using
-[PerlBrew](https://github.com/gugod/App-perlbrew), preventing any installation done by coc-perl.
+manually install it on your system or your local library path in case you're using, preventing any installation done by coc-perl.
 
 Now, for PerlNavigator, coc-perl also handles it automatically, but it requires `git` to be installed. In case you
 decide to install it manually, since it's not present in CPAN and its initialization is entirely written in TypeScript

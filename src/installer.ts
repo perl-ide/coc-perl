@@ -115,12 +115,19 @@ export async function installPLS(
         console.error(errMsg);
         return;
       }
+      if (!process.env['PERL5LIB']) {
+        const errMsg =
+          'PERL5LIB is not set, install Perl::LanguageServer manually as root';
+        console.error(errMsg);
+        window.showErrorMessage(errMsg);
+        return;
+      }
 
       const result = await runCommand(
         `cpan GRICHTER/Perl-LanguageServer-${version}.tar.gz`
       );
       if (result.err) {
-        console.error(result.err.message);
+        console.error(result.err?.message);
         window.showErrorMessage(`failed to install '${name}'`);
         return;
       }
