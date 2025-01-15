@@ -113,24 +113,22 @@ export async function installPLS(
         const errMsg =
           'CPAN is not installed, impossible to install Perl::LanguageServer';
         console.error(errMsg);
+        window.showErrorMessage(errMsg);
         return;
       }
-      if (!process.env['PERL5LIB']) {
-        const errMsg =
-          'PERL5LIB is not set, install Perl::LanguageServer manually as root';
+
+      const errRe = /make.*Error/;
+      const result = await runCommand(
+        `cpan -T GRICHTER/Perl-LanguageServer-${version}.tar.gz`
+      );
+      if (result.err || errRe.test(result.stdout!)) {
+        const errMsg = `failed to install '${name}', try installing it manually as root`;
+        if (result.err) console.error(result.err.message);
         console.error(errMsg);
         window.showErrorMessage(errMsg);
         return;
       }
 
-      const result = await runCommand(
-        `cpan GRICHTER/Perl-LanguageServer-${version}.tar.gz`
-      );
-      if (result.err) {
-        console.error(result.err?.message);
-        window.showErrorMessage(`failed to install '${name}'`);
-        return;
-      }
       window.showInformationMessage(`'${name}' installed`);
       installed = true;
     });
