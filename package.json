@@ -2,7 +2,7 @@
 	"name": "coc-perl",
 	"displayName": "Perl",
 	"description": "Client extension for Perl language server through coc.nvim",
-	"version": "2.2.1",
+	"version": "2.2.2",
 	"author": "bmeneg@heredoc.io",
 	"homepage": "https://github.com/bmeneg/coc-perl",
 	"publisher": "Bruno Meneguele <bmeneg@heredoc.io>",
