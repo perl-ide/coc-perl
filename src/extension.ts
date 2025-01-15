@@ -27,12 +27,12 @@ export async function activate(context: ExtensionContext) {
     if (!installed) return;
     config.navigator = newConfig;
     client = getNavigatorClient(config.navigator);
-    console.log('server Perl Navigator enabled');
+    console.log(`server Perl Navigator ${NavigatorVersion} enabled`);
   } else {
     const installed = await installPLS(config.pls, PLSVersion);
     if (!installed) return;
     client = await getPLSClient(config.pls, PLSVersion);
-    console.log('server Perl::LanguageServer enabled');
+    console.log(`server Perl::LanguageServer ${PLSVersion} enabled`);
   }
 
   // Push the disposable to the context's subscriptions so that the

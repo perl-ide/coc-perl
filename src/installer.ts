@@ -117,7 +117,7 @@ export async function installPLS(
       }
 
       const result = await runCommand(
-        `cpan GRICHTER/Perl-LanguageServer-${version}`
+        `cpan GRICHTER/Perl-LanguageServer-${version}.tar.gz`
       );
       if (result.err) {
         console.error(result.err.message);
