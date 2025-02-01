@@ -13,7 +13,7 @@
 import { workspace, WorkspaceConfiguration } from 'coc.nvim';
 
 import { IPLSConfig } from './p_ls';
-import { INavigatorConfig } from './navigator';
+import { INavigatorClientConfig } from './navigator';
 
 /* The default option property for Perl::LanguageServer is 'perl.*', which,
  * unfortunatelly colides with the format chosen for coc-perl, thus when
@@ -23,12 +23,17 @@ import { INavigatorConfig } from './navigator';
  * Perl::LanguageServer under 'perl.*', with the unwanted options as
  * optional so we can delete them later on. */
 interface ICompatPLSConfig extends IPLSConfig {
-  navigator?: INavigatorConfig;
+  navigator?: INavigatorClientConfig;
   'p::ls'?: IPLSConfig;
 }
 
+/* PerlNavigator requires working with `workpace/configuration` pull method,
+ * instead of the "old" synchronize config sections as PerlLanguageServer,
+ * thus splitting the config option that is specific to the client and
+ * server seems appropriate. */
 export interface IPerlConfig {
-  navigator: INavigatorConfig;
+  navigatorClient: INavigatorClientConfig;
+  navigatorServer: WorkspaceConfiguration;
   pls: IPLSConfig;
 }
 
@@ -75,7 +80,8 @@ export function getConfig(): IPerlConfig {
     });
   } while (didConfigChange);
 
-  const navConfig: INavigatorConfig = {
+  const navServerConfig = cocNavConfig;
+  const navClientConfig: INavigatorClientConfig = {
     enable: cocNavConfig.get('enable') as boolean,
     serverPath: cocNavConfig.get('serverPath') as string,
   };
@@ -111,13 +117,14 @@ export function getConfig(): IPerlConfig {
   } while (didConfigChange);
 
   const {
-    navigator: _,
-    'p::ls': __,
-    ...plsConfig
+    navigator: _, // perl.navigator
+    'p::ls': __, // perl.p::ls
+    ...plsConfig // perl.*
   } = cocPLSConfig as unknown as ICompatPLSConfig;
 
   const config: IPerlConfig = {
-    navigator: navConfig,
+    navigatorClient: navClientConfig,
+    navigatorServer: navServerConfig,
     pls: plsConfig,
   };
   return config;

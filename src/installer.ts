@@ -6,7 +6,7 @@ import { ExecOptions, exec } from 'child_process';
 import { ExtensionContext, window, workspace } from 'coc.nvim';
 import { SimpleGit, SimpleGitOptions, simpleGit } from 'simple-git';
 
-import { INavigatorConfig } from './navigator';
+import { INavigatorClientConfig } from './navigator';
 import { IPLSConfig } from './p_ls';
 import { withStatusBar } from './ui';
 
@@ -54,7 +54,7 @@ async function runCommand(cmd: string, cwd?: string): Promise<CmdResult> {
 
 function isNavigatorInstalled(
   context: ExtensionContext,
-  config: INavigatorConfig
+  config: INavigatorClientConfig
 ): InstallInfo {
   const info: InstallInfo = { installed: false };
 
@@ -142,9 +142,9 @@ export async function installPLS(
 
 export async function installNavigator(
   context: ExtensionContext,
-  config: INavigatorConfig,
+  config: INavigatorClientConfig,
   version: string
-): Promise<[boolean, INavigatorConfig]> {
+): Promise<[boolean, INavigatorClientConfig]> {
   const info = isNavigatorInstalled(context, config);
   if (info.installed) {
     config.serverPath = info.installPath

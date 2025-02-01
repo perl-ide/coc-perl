@@ -12,21 +12,28 @@ export async function activate(context: ExtensionContext) {
   let client: LanguageClient;
   const config = getConfig();
 
-  if (config.pls.enable === true && config.navigator.enable === true) {
+  if (config.pls.enable === true && config.navigatorClient.enable === true) {
     console.error('coc-perl activated, but more than one server enabled');
     return;
-  } else if (config.pls.enable === false && config.navigator.enable === false) {
+  } else if (
+    config.pls.enable === false &&
+    config.navigatorClient.enable === false
+  ) {
     console.error('coc-perl activated, but no server enabled');
     return;
-  } else if (config.navigator.enable === true) {
+  } else if (config.navigatorClient.enable === true) {
     const [installed, newConfig] = await installNavigator(
       context,
-      config.navigator,
+      config.navigatorClient,
       NavigatorVersion
     );
     if (!installed) return;
-    config.navigator = newConfig;
-    client = getNavigatorClient(config.navigator);
+
+    config.navigatorClient = newConfig;
+    client = getNavigatorClient(
+      config.navigatorClient.serverPath,
+      config.navigatorServer
+    );
     console.log(`server Perl Navigator ${NavigatorVersion} enabled`);
   } else {
     const installed = await installPLS(config.pls, PLSVersion);
