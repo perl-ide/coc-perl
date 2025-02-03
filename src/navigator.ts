@@ -19,23 +19,16 @@
 import {
   LanguageClient,
   LanguageClientOptions,
-  Middleware,
   ServerOptions,
   TransportKind,
-  WorkspaceConfiguration,
 } from 'coc.nvim';
-
-import { DidChangeConfigurationNotification } from 'vscode-languageserver-protocol';
 
 export interface INavigatorClientConfig {
   enable: boolean;
   serverPath: string;
 }
 
-export function getNavigatorClient(
-  serverPath: string,
-  serverConfig: WorkspaceConfiguration
-): LanguageClient {
+export function getNavigatorClient(serverPath: string): LanguageClient {
   const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
 
   // If the extension is launched in debug mode then the debug server
@@ -52,28 +45,11 @@ export function getNavigatorClient(
     },
   };
 
-  const middleware: Middleware = {
-    workspace: {
-      didChangeConfiguration: () =>
-        client.sendNotification(
-          DidChangeConfigurationNotification.type as any,
-          {
-            settings: serverConfig,
-          }
-        ),
-    },
-  };
-
   const clientOptions: LanguageClientOptions = {
     documentSelector: [
       { scheme: 'file', language: 'perl' },
       { scheme: 'untitled', language: 'perl' },
     ],
-    synchronize: {
-      configurationSection: ['perl.navigator'],
-    },
-    initializationOptions: {},
-    middleware,
   };
 
   const client = new LanguageClient(

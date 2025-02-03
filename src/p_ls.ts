@@ -39,11 +39,11 @@ import {
   RevealOutputChannelOn,
 } from 'coc.nvim';
 
-/* The IPLSConfig interface doesn't contain all configuration options
- * because only some of them are necessary for Perl interpreter before the
- * actual langague server startup. The remainer of the options are kept and
- * used by coc.nvim through the package.json file. */
-export interface IPLSConfig {
+/* The IPLSClientConfig interface doesn't contain every configuration option
+ * possible because only some of them are necessary for the client to start
+ * the Perl interpreter through CLI options. The remainer of the options are
+ * kept and passed to the server through coc.nvim from package.json. */
+export interface IPLSClientConfig {
   enable: boolean;
 
   perlCmd: string;
@@ -161,7 +161,7 @@ function buildContainerArgs(
 }
 
 export async function getPLSClient(
-  config: IPLSConfig,
+  config: IPLSClientConfig,
   version: string
 ): Promise<LanguageClient> {
   const resource = window.activeTextEditor?.document.uri;
@@ -277,7 +277,7 @@ export async function getPLSClient(
     revealOutputChannelOn: RevealOutputChannelOn.Never,
     synchronize: {
       // Synchronize the settings to the server
-      configurationSection: ['perl.p::ls'],
+      configurationSection: ['perl'],
     },
   };
 

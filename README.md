@@ -73,48 +73,44 @@ configuration properties are defined for each server.
 ### Configuration properties
 
 As said before, coc-perl supports two different Perl language servers: _Perl::LanguageServer_ (hereafter referred as
-`p::ls`) and _PerlNavigator_ (hereafter referred as `navigator`). Each has its own set of options to be set on
+`pls`) and _PerlNavigator_ (hereafter referred as `navigator`). Each has its own set of options to be set on
 `:CocConfig` and coc-perl support them completely.
 
-Originally, for those using `p::ls` in VSCode or older versions of coc-perl, the default properties can be used, like
-`perl.*`, while for newcomers, it's recommended the new coc-perl format to avoid confusion, `perl.p::ls.*`. Now, for
-`navigator`, the original format is also supported, `perlnavigator.*`, but in the same way the new format is
-recommended when using it with coc-perl, `perl.navigator.*`.
+For those using `pls`, configuration options are set under the `perl.*` namespace, while for `navigator`, the
+namespace `perlnavigator.*` is used.
+
+#### Deprecation/removal notice
+
+In the coc-perl version `2.x`, there was an effort to also support coc-specific namespaces, like `perl.p::ls.*` for
+_Perl::LanguageServer_ and `perl.navigator.*` for _PerlNavigator_. However, after some time, the burden to keep both
+default and coc-perl specific namespace has proven not to be worth. With that, we have completely removed its support
+in version `3.x`.
 
 ### Enabling one server
 
 Only one language server can be enabled at a time. In case both are enabled, an error will be prompted on
 `:CocOpenLog` and no server action will be seen on (neo)vim's buffer.
 
-For enabling `p::ls`, you can use either options (the first is preferred):
+For enabling `pls`, you can use either options (the first is preferred):
 
-```json
-{
-    "perl.p::ls.enable": true
-}
-```
 ```json
 {
     "perl.enable": true
 }
 ```
+
 And for `navigator`:
 
-```json
-{
-    "perl.navigator.enable": true,
-}
-```
-or using the original configuration property (not recommended):
 ```json
 {
     "perlnavigator.enable": true,
 }
 ```
+
 If you're using a development branch of `navigator`, manually downloaded and/or installed, you'll need one additional
 option: the server absolute path.
 ```json
-    "perl.navigator.serverPath": "/home/<user>/PerlNavigator/server/out/server.js"
+    "perlnavigator.serverPath": "/home/<user>/PerlNavigator/server/out/server.js"
 ```
 
 ### Other options
@@ -124,12 +120,12 @@ server version being used. Because of that, make sure to always run the newest v
 coc-perl extension. A brief example of using different options are as follows:
 ```json
 {
-    "perl.p::ls.enable": true,
-    "perl.p::ls.logLevel": 2,
-    "perl.p::ls.logFile": "/home/<user>/coc-perl.log",
+    "perl.enable": true,
+    "perl.logLevel": 2,
+    "perl.logFile": "/home/<user>/coc-perl.log",
 
-    "perl.navigator.enable": false,
-    "perl.navigator.serverPath": "/home/<user>/PerlNavigator/server/out/server.js"
+    "perlnavigator.enable": false,
+    "perlnavigator.serverPath": "/home/<user>/PerlNavigator/server/out/server.js"
 }
 ```
 

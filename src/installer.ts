@@ -7,7 +7,7 @@ import { ExtensionContext, window, workspace } from 'coc.nvim';
 import { SimpleGit, SimpleGitOptions, simpleGit } from 'simple-git';
 
 import { INavigatorClientConfig } from './navigator';
-import { IPLSConfig } from './p_ls';
+import { IPLSClientConfig } from './p_ls';
 import { withStatusBar } from './ui';
 
 const asyncExec = util.promisify(exec);
@@ -58,7 +58,7 @@ function isNavigatorInstalled(
 ): InstallInfo {
   const info: InstallInfo = { installed: false };
 
-  if (config.serverPath.length !== 0) {
+  if (config.serverPath?.length !== 0) {
     info.installed = true;
     return info;
   }
@@ -79,7 +79,7 @@ function isNavigatorInstalled(
   return info;
 }
 
-async function isPLSInstalled(config: IPLSConfig): Promise<InstallInfo> {
+async function isPLSInstalled(config: IPLSClientConfig): Promise<InstallInfo> {
   let cmd = `perl -MPerl::LanguageServer -e 1`;
   if (config.perlInc.length > 0) {
     cmd = `perl -I${config.perlInc} -MPerl::LanguageServer -e 1`;
@@ -98,7 +98,7 @@ async function isPLSInstalled(config: IPLSConfig): Promise<InstallInfo> {
 }
 
 export async function installPLS(
-  config: IPLSConfig,
+  config: IPLSClientConfig,
   version: string
 ): Promise<boolean> {
   const info = await isPLSInstalled(config);
@@ -204,6 +204,7 @@ export async function installNavigator(
       }
 
       cwd = path.join(cwd, 'server');
+      // Install locally
       result = await runCommand('npm exec tsc', cwd);
       if (result.err) {
         console.error(result.err.message);
